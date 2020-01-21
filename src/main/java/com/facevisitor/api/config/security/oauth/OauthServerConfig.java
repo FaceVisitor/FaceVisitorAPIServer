@@ -1,6 +1,6 @@
 package com.facevisitor.api.config.security.oauth;
 
-import com.facevisitor.api.service.user.SecurityUserDetailService;
+import com.facevisitor.api.config.security.SecurityUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 @Configuration
 @EnableAuthorizationServer
 public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
+
+    private static final String SERVER_RESOURCE_ID = "face_visitor_oauth2";
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -44,11 +46,13 @@ public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient(clientId)
-                .secret(this.passwordEncoder.encode(clientSecurity))
-                .accessTokenValiditySeconds(60 * 60 * 24)
-                .refreshTokenValiditySeconds(60 * 60 * 24 * 10)
+                .secret(passwordEncoder.encode(clientSecurity))
+                .accessTokenValiditySeconds(60 * 60 * 24) //1day
+                .refreshTokenValiditySeconds(60 * 60 * 24 * 10) //10day
+                .resourceIds(SERVER_RESOURCE_ID)
                 .authorizedGrantTypes("password", "refresh_token")
-                .scopes("read", "write");
+                .scopes("read","write");
+
     }
 
     @Override
@@ -57,4 +61,5 @@ public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
                 .userDetailsService(securityUserDetailService)
                 .accessTokenConverter(jwtAccessTokenConverter);
     }
+
 }

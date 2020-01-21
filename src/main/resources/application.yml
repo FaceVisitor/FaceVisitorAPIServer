@@ -3,9 +3,7 @@ spring:
     multipart:
       max-file-size: 7MB
       max-request-size: 7MB
-  jpa:
-    properties:
-      hibernate.default_batch_fetch_size: 1000
+
 
   application:
     name: "FACE_VISITOR"
@@ -15,6 +13,10 @@ spring:
 
 
 
+
+jpa:
+  properties:
+    hibernate.default_batch_fetch_size: 1000
 
 
 

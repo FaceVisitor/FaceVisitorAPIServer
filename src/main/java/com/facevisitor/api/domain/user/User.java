@@ -2,6 +2,7 @@ package com.facevisitor.api.domain.user;
 
 import com.facevisitor.api.domain.base.BaseEntity;
 import com.facevisitor.api.domain.face.FaceMeta;
+import com.facevisitor.api.domain.security.Authority;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,13 +15,14 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"authorities", "faceMeta"})
 public class User extends BaseEntity {
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "face_meta_id")
     @JsonIgnore
     FaceMeta faceMeta;
+
     @Id
     @GeneratedValue
     private Long id;
@@ -30,7 +32,7 @@ public class User extends BaseEntity {
     private String name;
     private String phone;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinTable(name = "UserToAuthority", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "auth_id")})
     private Set<Authority> authorities = new LinkedHashSet<>();

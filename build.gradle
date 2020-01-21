@@ -9,6 +9,9 @@ group = 'com.facevisitor.api'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+def queryDslVersion = '4.2.1'
+
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -17,6 +20,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
 ext {
@@ -43,6 +47,18 @@ dependencies {
     implementation('com.google.code.gson:gson:2.8.5')
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
+    compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '2.0.0.RELEASE'
+
+
+    // QueryDSL
+    implementation("com.querydsl:querydsl-core:${queryDslVersion}")
+    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
+    annotationProcessor ( /* QueryDSL 주석 프로세서 사용 and (빌드, 실행, 배포 → 컴파일러 → 어노테이션 프로세서)에서 IntelliJ 설정 */
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa",
+            "javax.persistence:javax.persistence-api:2.2",
+            "javax.annotation:javax.annotation-api:1.3.2",
+    )
+
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'

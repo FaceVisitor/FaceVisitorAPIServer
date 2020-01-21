@@ -6,6 +6,8 @@ import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
@@ -26,9 +28,9 @@ public class JwtUtils {
     @Autowired
     private KeyPair keyPair;
 
-    public String generator(User user) {
+    public String createAccessToken(String email) {
 
-        log.debug("jwt user ::: {}", user);
+
         // 토큰 만료일 3일 후
         Date expireDate = new Date(LocalDateTime.now().plusDays(3).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
@@ -37,14 +39,14 @@ public class JwtUtils {
                 .setExpiration(expireDate)
                 .setId(UUID.randomUUID().toString()) // 고유값
                 .claim("client_id", clientID)
-                .claim("user_name", user.getEmail())
+                .claim("user_name", email)
                 .claim("scope", Collections.singletonList("read"))
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
     }
 
 
-    public String generateRefreshToken(User user) {
+    public String createRefreshToken(String email) {
 
         // 토큰 만료일 30일이 후
         Date expireDate = new Date(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -54,7 +56,7 @@ public class JwtUtils {
                 .setExpiration(expireDate)
                 .setId(UUID.randomUUID().toString()) // 고유값
                 .claim("client_id", clientID)
-                .claim("user_name", user.getEmail())
+                .claim("user_name", email)
                 .claim("scope", Collections.singletonList("read"))
                 .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();

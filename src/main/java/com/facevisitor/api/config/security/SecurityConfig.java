@@ -1,11 +1,12 @@
 package com.facevisitor.api.config.security;
 
-import com.facevisitor.api.service.user.SecurityUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,10 +14,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+
 
     @Autowired
     private SecurityUserDetailService securityUserDetailService;
@@ -24,10 +28,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(securityUserDetailService).passwordEncoder(passwordEncoder);
+//    @Bean
+//    public AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver(){
+//        return new AuthenticationPrincipalArgumentResolver();
 //    }
+
 
     @Bean
     @Override
@@ -36,27 +41,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new InMemoryTokenStore();
-    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(securityUserDetailService).passwordEncoder(passwordEncoder);
     }
 
-
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+    public void configure(WebSecurity web) throws Exception {
+
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
-//        web.ignoring().antMatchers("/api/v1/auth/join");
-//        web.ignoring().antMatchers("/api/v1/auth/login");
-//        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    protected void configure(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeRequests()
+//                .anyRequest()
+//                .authenticated()
+//                .antMatchers("/api/v1/**").permitAll()
+//                .antMatchers("/api/v1/user/me/").hasAnyRole("SUPER", "ADMIN")
+//                .and()
+//                .headers()
+//                .frameOptions()
+//                .disable()
+//                .and()
+//                .csrf()
+//                .and()
+//                .headers().frameOptions().disable();
     }
 }

@@ -1,4 +1,4 @@
-package com.facevisitor.api.domain.user;
+package com.facevisitor.api.domain.security;
 
 import com.facevisitor.api.domain.base.BaseEntity;
 import lombok.*;

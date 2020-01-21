@@ -3,13 +3,15 @@ package com.facevisitor.api.service.auth;
 import com.facevisitor.api.common.exception.BadRequestException;
 import com.facevisitor.api.common.exception.UnAuthorizedException;
 import com.facevisitor.api.common.utils.ServerUtils;
+import com.facevisitor.api.config.security.jwt.JwtUtils;
+import com.facevisitor.api.domain.face.FaceId;
+import com.facevisitor.api.domain.face.FaceImage;
 import com.facevisitor.api.domain.face.FaceMeta;
-import com.facevisitor.api.domain.user.Authority;
-import com.facevisitor.api.domain.user.AuthorityRepository;
+import com.facevisitor.api.domain.security.Authority;
+import com.facevisitor.api.domain.security.AuthorityRepository;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.UserRepository;
+import com.facevisitor.api.domain.user.repo.UserRepository;
 import com.facevisitor.api.dto.user.Join;
-import com.facevisitor.api.dto.user.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +30,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -51,6 +53,10 @@ public class AuthService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
     @Autowired
     ModelMapper modelMapper;
 
@@ -60,54 +66,19 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public ResponseEntity login(Login login, HttpServletRequest request) {
-
-
-        if (!userRepository.findByEmail(login.getEmail()).isPresent()) {
-            throw new BadRequestException("가입되지 않았습니다.");
+    public Map<String,String> login(List<String> faceIds) {
+        User user = userRepository.findByFaceIds(faceIds);
+        if(user == null){
+            throw new BadRequestException("로그인에 실패했습니다.");
         }
 
-        String host = ServerUtils.myHostname(request);
-        log.debug("host : {}", host);
-
-        // Android Test
-        if (host.startsWith("http://10.0.2.2")) {
-            host = host.replace("http://10.0.2.2", "http://localhost");
-        }
-
-        ResponseEntity responseEntity = null;
-        URL url;
-        StringBuilder response = new StringBuilder();
-
-        try {
-            url = UriComponentsBuilder.fromHttpUrl(String.format("%s/oauth/token", host))
-                    .queryParam("grant_type", "password")
-                    .queryParam("username", login.getEmail())
-                    .queryParam("password", login.getPassword())
-                    .build()
-                    .encode()
-                    .toUri()
-                    .toURL();
-//            url = new URL(String.format("%s/oauth/token?grant_type=password&username=%s&password=%s", host, email, password));
-            HttpURLConnection myConnection = createConnection(url);
-
-            if (myConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-
-                String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(myConnection.getInputStream()));
-                while ((line = br.readLine()) != null) {
-                    response.append(line);
-                }
-                responseEntity = ResponseEntity.ok(response.toString());
-            } else {
-                throw new BadRequestException("로그인 정보를 다시 확인해주세요");
-            }
-            myConnection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return responseEntity;
+        String accessToken = jwtUtils.createAccessToken(user.getEmail());
+        String refreshToken = jwtUtils.createAccessToken(user.getEmail());
+        HashMap<String,String> loginMeta = new HashMap<>();
+        loginMeta.put("access_token", accessToken);
+        loginMeta.put("refresh_token",refreshToken);
+        loginMeta.put("createdAt", LocalDateTime.now().toString());
+        return loginMeta;
     }
 
     public ResponseEntity refreshToken(String refreshToken, HttpServletRequest request) {
@@ -150,6 +121,44 @@ public class AuthService {
     }
 
 
+
+
+
+    public User join(Join join) {
+        User mappedUser = new User();
+        mappedUser.setEmail(join.getEmail());
+        mappedUser.setPassword(join.getPassword());
+        mappedUser.setName(join.getName());
+        mappedUser.setPassword(encodePassword(join.getPassword()));
+        mappedUser.setAuthorities(userAuthority());
+        mappedUser.setPhone(join.getPhone());
+
+        FaceMeta faceMeta = new FaceMeta();
+        faceMeta.setGender(join.getGender());
+        faceMeta.setLowAge(join.getLowAge());
+        faceMeta.setHighAge(join.getHighAge());
+        List<FaceId> faceIds = join.getFaceIds().stream().map(id -> FaceId.builder().faceId(id).build()).collect(Collectors.toList());
+        for(FaceId id : faceIds){
+            faceMeta.addFaceId(id);
+        }
+        List<FaceImage> faceImages = join.getFaceImageUrl().stream().map(url -> {
+            FaceImage faceImage = new FaceImage();
+            faceImage.setUrl(url);
+            return faceImage;
+        }).collect(Collectors.toList());
+        for(FaceImage faceImage : faceImages){
+            faceMeta.addFaceImage(faceImage);
+        }
+        mappedUser.addFaceMeta(faceMeta);
+        return userRepository.save(mappedUser);
+    }
+
+
+
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
     private HttpURLConnection createConnection(URL url) throws IOException {
         HttpURLConnection myConnection = (HttpURLConnection) url.openConnection();
         myConnection.setRequestProperty("Content-Type", "application/json");
@@ -171,27 +180,6 @@ public class AuthService {
         return myConnection;
     }
 
-
-    public User join(Join join) {
-        User mappedUser = new User();
-        mappedUser.setEmail(join.getEmail());
-        mappedUser.setPassword(join.getPassword());
-        mappedUser.setName(join.getName());
-        mappedUser.setPassword(encodePassword(join.getPassword()));
-        mappedUser.setAuthorities(userAuthority());
-        mappedUser.setPhone(join.getPhone());
-        FaceMeta faceMeta = new FaceMeta();
-        faceMeta.setFaceId(join.getFaceIds());
-        faceMeta.setGender(join.getGender());
-        faceMeta.setLowAge(join.getLowAge());
-        faceMeta.setHighAge(join.getHighAge());
-        mappedUser.addFaceMeta(faceMeta);
-        return userRepository.save(mappedUser);
-    }
-
-    public String encodePassword(String password) {
-        return passwordEncoder.encode(password);
-    }
 
     public Set<Authority> userAuthority() {
         HashSet<Authority> authorities = new HashSet<>();

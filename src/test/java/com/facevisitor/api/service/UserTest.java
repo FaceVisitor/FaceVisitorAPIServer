@@ -1,8 +1,8 @@
-package com.facevisitor.api;
+package com.facevisitor.api.service;
 
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.UserRepository;
-import com.facevisitor.api.service.user.SecurityUserDetailService;
+import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.config.security.SecurityUserDetailService;
 import com.facevisitor.api.service.user.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +35,14 @@ public class UserTest {
     public void 유저정보() {
         User userByEmail = userService.getUserByEmail("wndudpower@gmail.com");
 
+    }
+
+    @Test
+    public void 유저삭제(){
+//        userService.deleteUser(45L);
+//        userService.deleteUser(46L);
+//        userService.deleteUser(47L);
+        userService.deleteUser(52L);
     }
 
 

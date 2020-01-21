@@ -4,15 +4,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
-@Configuration
 @EnableResourceServer
+@Configuration
 public class OauthResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+    private static final String SERVER_RESOURCE_ID = "face_visitor_oauth2";
+
+
+
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.resourceId(SERVER_RESOURCE_ID);
+    }
+
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/**").permitAll()
-                .and().csrf().disable();
+                .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/user/exist").permitAll()
+                .anyRequest().authenticated()
+                .and().csrf().disable()
+                .formLogin().disable();
     }
 }

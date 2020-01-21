@@ -1,9 +1,14 @@
 package com.facevisitor.api.common.utils;
 
 
+import com.facevisitor.api.domain.user.User;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.util.Random;
 
 public class Utils {
+
+
     public static int ascPriority(int priority, int priority2) {
         return Integer.compare(priority, priority2);
     }

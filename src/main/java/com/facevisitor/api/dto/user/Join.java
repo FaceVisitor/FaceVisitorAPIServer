@@ -21,6 +21,7 @@ public class Join {
     @NotNull(message = "얼굴정보가  없습니다.")
     @NotEmpty(message = "얼굴정보가  없습니다.")
     List<String> faceIds;
+    List<String> faceImageUrl;
     String gender;
     int lowAge;
     int highAge;

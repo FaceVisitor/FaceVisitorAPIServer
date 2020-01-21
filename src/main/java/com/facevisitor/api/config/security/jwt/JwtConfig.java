@@ -37,23 +37,22 @@ public class JwtConfig {
     @Value("${jwt.keystore.publicKey}")
     private String publicKey;
 
-
-    //For OauthServerConfig.java TokenStore
-
     @Bean
     public KeyPair keyPair() {
         return new KeyStoreKeyFactory(new ClassPathResource("keystore.jks"), keyStorePassword.toCharArray())
                 .getKeyPair(keyStoreAlias);
     }
 
-    //실제 사용
+
     @Bean
+    //실제 사용
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setKeyPair(keyPair());
         converter.setVerifierKey(publicKey);
         return converter;
     }
+
 
     @Bean
     public JwtTokenStore customJwtTokenStore() {
