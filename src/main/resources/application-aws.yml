@@ -1,9 +1,0 @@
-aws:
-  key:
-    accesskey: AKIAQDTGQVLM6M7WG6KF
-    secretkey: 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
-  s3:
-    url: https://facevisitor-bucket.s3.ap-northeast-2.amazonaws.com/
-    bucketName: facevisitor-bucket
-    region: ap-northeast-2
-
