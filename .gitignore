@@ -30,8 +30,9 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/test/java/com/facevisitor/api/ControllerTest.java
 /src/main/resources/keystore.jks
 /src/main/resources/jwtkey-facevisitor.cer
 /src/main/resources/application-key.yml
 /src/main/resources/application-aws.yml
+/src/main/resources/application-production.properties
+/src/main/resources/application-production
