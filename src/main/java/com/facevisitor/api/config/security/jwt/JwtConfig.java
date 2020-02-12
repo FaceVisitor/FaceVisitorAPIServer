@@ -37,6 +37,8 @@ public class JwtConfig {
     @Value("${jwt.keystore.publicKey}")
     private String publicKey;
 
+
+
     @Bean
     public KeyPair keyPair() {
         return new KeyStoreKeyFactory(new ClassPathResource("keystore.jks"), keyStorePassword.toCharArray())

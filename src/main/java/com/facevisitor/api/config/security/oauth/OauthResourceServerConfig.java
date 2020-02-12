@@ -23,7 +23,13 @@ public class OauthResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/api/v1/").permitAll()
+                .antMatchers("auth/**").permitAll()
                 .antMatchers("/api/v1/auth/**").permitAll()
+//                .antMatchers("/api/v1/owner/**").hasAnyRole("OWNER","SUPER")
+                .antMatchers("/api/v1/owner").permitAll()
+                .antMatchers("/api/v1/owner/auth/**").permitAll()
+                .antMatchers("/api/v1/owner/auth/**").permitAll()
                 .antMatchers("/api/v1/user/exist").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable()

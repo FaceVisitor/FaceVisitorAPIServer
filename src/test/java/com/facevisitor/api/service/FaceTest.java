@@ -1,9 +1,5 @@
 package com.facevisitor.api.service;
 
-import com.facevisitor.api.domain.face.FaceId;
-import com.facevisitor.api.domain.face.FaceImage;
-import com.facevisitor.api.domain.face.FaceMeta;
-import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.domain.user.repo.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

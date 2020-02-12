@@ -9,7 +9,7 @@ spring:
     name: "FACE_VISITOR"
   profiles:
     active: dev
-    include: key
+    include: key, aws
 
 
 

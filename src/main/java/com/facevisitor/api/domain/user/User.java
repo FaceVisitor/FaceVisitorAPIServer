@@ -33,7 +33,6 @@ public class User extends BaseEntity {
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinTable(name = "UserToAuthority", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "auth_id")})
     private Set<Authority> authorities = new LinkedHashSet<>();
 
@@ -44,6 +43,8 @@ public class User extends BaseEntity {
         meta.setUser(this);
         this.setFaceMeta(meta);
     }
+
+
 
 
 }

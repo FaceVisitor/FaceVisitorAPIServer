@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserCustomRep
     Optional<User> findByEmail(String email);
 
     @Query("select u from User u join fetch u.authorities join fetch u.faceMeta fm join fetch fm.faceId fi where fi.faceId in (?1)")
-    User findByFaceIds(List<String> faceIds);
+    Optional<User> findByFaceIds(List<String> faceIds);
 
 }

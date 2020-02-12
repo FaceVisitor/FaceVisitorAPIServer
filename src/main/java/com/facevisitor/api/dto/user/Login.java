@@ -25,4 +25,16 @@ public class Login {
         String refresh_token;
         String createdAt;
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class DirectResponse{
+        String username;
+        String access_token;
+        String refresh_token;
+        String createdAt;
+    }
+
+
 }

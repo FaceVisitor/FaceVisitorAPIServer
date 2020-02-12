@@ -34,3 +34,4 @@ out/
 /src/main/resources/keystore.jks
 /src/main/resources/jwtkey-facevisitor.cer
 /src/main/resources/application-key.yml
+/src/main/resources/application-aws.yml

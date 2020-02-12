@@ -66,10 +66,14 @@ public class AuthService {
         return userRepository.save(user);
     }
 
+
+
+
+
     public Map<String,String> login(List<String> faceIds) {
-        User user = userRepository.findByFaceIds(faceIds);
+        User user = userRepository.findByFaceIds(faceIds).orElse(null);
         if(user == null){
-            throw new BadRequestException("로그인에 실패했습니다.");
+            throw new BadRequestException("얼굴을 찾지 못했습니다..");
         }
 
         String accessToken = jwtUtils.createAccessToken(user.getEmail());

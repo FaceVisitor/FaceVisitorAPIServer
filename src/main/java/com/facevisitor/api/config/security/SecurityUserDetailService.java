@@ -1,8 +1,8 @@
 package com.facevisitor.api.config.security;
 
 import com.facevisitor.api.common.exception.NotFoundUserException;
-import com.facevisitor.api.domain.security.SecurityUser;
 import com.facevisitor.api.domain.security.Authority;
+import com.facevisitor.api.domain.security.SecurityUser;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.domain.user.repo.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +28,20 @@ public class SecurityUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundUserException(email + "을 찾을 수 없습니다"));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),  toGranted(user.getAuthorities()));
+        return new SecurityUser(user.getId(),user.getEmail(), user.getName(),user.getPassword(),toGranted(user.getAuthorities()));
     }
 
     public Set<SimpleGrantedAuthority> toGranted(Set<Authority> authorities) {
         return authorities.stream().map(authority -> new SimpleGrantedAuthority("ROLE_" + authority.getRole())).collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public UserDetails loadUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
+
+        return SecurityUser.create(user);
     }
 
 

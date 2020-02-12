@@ -1,6 +1,5 @@
 package com.facevisitor.api.domain.security;
 
-import com.facevisitor.api.domain.security.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {

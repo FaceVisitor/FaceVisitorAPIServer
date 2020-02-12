@@ -3,11 +3,8 @@ package com.facevisitor.api.common.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

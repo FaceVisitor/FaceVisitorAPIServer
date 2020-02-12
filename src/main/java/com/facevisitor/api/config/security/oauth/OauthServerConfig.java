@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 @Configuration
@@ -37,10 +36,10 @@ public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Value("${secret.oauth.clientSecurity}")
     String clientSecurity;
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) {
-        security.passwordEncoder(passwordEncoder);
-    }
+//    @Override
+//    public void configure(AuthorizationServerSecurityConfigurer security) {
+//        security.passwordEncoder(passwordEncoder);
+//    }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {

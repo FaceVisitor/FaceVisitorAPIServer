@@ -1,6 +1,6 @@
 package com.facevisitor.api.domain.face;
 
-import com.facevisitor.api.domain.base.BaseImageEntity;
+import com.facevisitor.api.domain.base.BaseImageFileEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString(exclude = "faceMeta")
-public class FaceImage extends BaseImageEntity {
+public class FaceImage extends BaseImageFileEntity {
     @Id
     @GeneratedValue
     Long id;

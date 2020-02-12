@@ -1,13 +1,10 @@
 package com.facevisitor.api.config.security.jwt;
 
 import com.facevisitor.api.common.exception.UnAuthorizedException;
-import com.facevisitor.api.domain.user.User;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;

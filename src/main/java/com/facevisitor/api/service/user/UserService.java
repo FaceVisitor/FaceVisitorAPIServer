@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 @Slf4j
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -29,19 +29,20 @@ public class UserService {
     }
 
 
+    @Transactional(readOnly = true)
     public Boolean exist(String email){
         return userRepository.findByEmail(email).isPresent();
     }
-
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
     }
-
+    @Transactional(readOnly = true)
     public User getUserByFaceIds(List<String> faceId){
-          return userRepository.findByFaceIds(faceId);
+          return userRepository.findByFaceIds(faceId).orElseThrow(NotFoundException::new);
     }
 
-
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(NotFoundException::new);
     }

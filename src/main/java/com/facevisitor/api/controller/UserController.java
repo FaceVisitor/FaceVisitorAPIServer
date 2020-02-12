@@ -1,18 +1,10 @@
 package com.facevisitor.api.controller;
 
-import com.facevisitor.api.config.security.CurrentUserAdapter;
-import com.facevisitor.api.domain.security.SecurityUser;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.dto.user.Login;
 import com.facevisitor.api.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;

@@ -59,7 +59,7 @@ public class AuthTest {
         List<String> faceIDs = new ArrayList();
         faceIDs.add("a");
         faceIDs.add("b");
-        User user = userRepository.findByFaceIds(faceIDs);
+        User user = userRepository.findByFaceIds(faceIDs).orElse(null);
         System.out.println(user);
     }
 

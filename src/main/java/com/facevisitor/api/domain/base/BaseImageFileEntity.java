@@ -3,6 +3,7 @@ package com.facevisitor.api.domain.base;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,8 +21,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY) // 모든 필드에 json 적용
 @EntityListeners(AuditingEntityListener.class)
-
-public abstract class BaseImageEntity implements Serializable {
+@NoArgsConstructor
+public abstract class BaseImageFileEntity implements Serializable {
 
     @Getter
     @Setter
@@ -29,7 +30,7 @@ public abstract class BaseImageEntity implements Serializable {
 
     @Getter
     @Setter
-    String filename = "";
+    String name = "";
 
     // 생성한 날짜
     @Getter

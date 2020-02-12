@@ -6,13 +6,16 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.user.Join;
 import com.facevisitor.api.dto.user.Login;
 import com.facevisitor.api.service.auth.AuthService;
+import com.facevisitor.api.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,13 +29,16 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    private final UserService userService;
+
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@RequestBody @Valid  Login.Request loginRequest, Errors errors) {
+    public ResponseEntity login(@RequestBody @Valid  Login.Request loginRequest, Errors errors) {
 
         log.debug("face Ids : {}", loginRequest.getFaceId());
         if(errors.hasErrors()){
@@ -51,6 +57,27 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = "/direct_login")
+    public ResponseEntity directLogin(@RequestBody @Valid  Login.Request loginRequest, Errors errors) {
+
+        log.debug("face Ids : {}", loginRequest.getFaceId());
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().body(errors);
+        }
+        List<String> faceIds = loginRequest.getFaceId();
+        if(!(faceIds.size() >0)){
+            throw new NotFoundException();
+        }
+
+        Map<String, String> login = authService.login(faceIds);
+        String access_token = login.get("access_token");
+        String refresh_token = login.get("refresh_token");
+        String createdAt = login.get("createdAt");
+        User userByFaceIds = userService.getUserByFaceIds(faceIds);
+        Login.DirectResponse response = new Login.DirectResponse(userByFaceIds.getName(),access_token,refresh_token,createdAt);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping(value = "/join")
     public ResponseEntity<?> join(@RequestBody Join join) {
         log.debug("회원가입 요청  이름 : " + join.getName() + " 이메일 :" + join.getEmail() + " face ids" + join.getFaceIds());
@@ -66,5 +93,6 @@ public class AuthController {
         String refreshToken = payload.get("refresh_token");
         return authService.refreshToken(refreshToken, request);
     }
+
 
 }

@@ -19,7 +19,8 @@ import java.util.Arrays;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -39,7 +40,7 @@ public class AuthControllerTest {
         mockMvc.perform(
                 post("/oauth/token")
                         .with(httpBasic(clientId, clientSecurity))
-                        .param("username", "test.com")
+                        .param("username", "sajang@facevisitor.com")
                         .param("password", "asdf4112")
                         .param("grant_type", "password")
         )
@@ -49,18 +50,7 @@ public class AuthControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    public void 로그인() throws Exception {
-        Login.Request request = new Login.Request();
-        request.setFaceId(Arrays.asList("98373c74-b0bd-40bc-9b39-8174999dd6cf"));
-        mockMvc.perform(
-                post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request)))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.access_token").exists())
-                .andExpect(jsonPath("$.refresh_token").exists())
-                .andExpect(jsonPath("$.createdAt").exists())
-                .andDo(print());
-    }
+
 
     @Test
     @Transactional
@@ -77,6 +67,33 @@ public class AuthControllerTest {
         mockMvc.perform(
                 post("/api/v1/auth/join").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(join)))
                 .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+    }
+
+    @Test
+    public void 다이렉트_로그인() throws Exception {
+        Login.Request request = new Login.Request();
+        request.setFaceId(Arrays.asList("98373c74-b0bd-40bc-9b39-8174999dd6cf"));
+        mockMvc.perform(
+                post("/api/v1/auth/direct_login").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.username").exists())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andExpect(jsonPath("$.refresh_token").exists())
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andDo(print());
+    }
+
+    @Test
+    public void 로그인() throws Exception {
+        Login.Request request = new Login.Request();
+        request.setFaceId(Arrays.asList("98373c74-b0bd-40bc-9b39-8174999dd6cf"));
+        mockMvc.perform(
+                post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andExpect(jsonPath("$.refresh_token").exists())
+                .andExpect(jsonPath("$.createdAt").exists())
                 .andDo(print());
     }
 

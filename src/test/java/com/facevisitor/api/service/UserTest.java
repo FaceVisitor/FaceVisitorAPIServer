@@ -1,8 +1,8 @@
 package com.facevisitor.api.service;
 
+import com.facevisitor.api.config.security.SecurityUserDetailService;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.domain.user.repo.UserRepository;
-import com.facevisitor.api.config.security.SecurityUserDetailService;
 import com.facevisitor.api.service.user.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -30,7 +34,15 @@ public class UserTest {
         System.out.println(userDetails.getAuthorities());
     }
 
+    @Test
+    public void 유저정보withFaceIds(){
+        String faceID=  "98373c74-b0bd-40bc-9b39-8174999dd6cf";
+        List<String> strings = Arrays.asList(faceID);
+        User userByFaceIds = userService.getUserByFaceIds(strings);
+        assertThat(userByFaceIds).isNotNull();
+        System.out.println(userByFaceIds.getName());
 
+    }
     @Test
     public void 유저정보() {
         User userByEmail = userService.getUserByEmail("wndudpower@gmail.com");
