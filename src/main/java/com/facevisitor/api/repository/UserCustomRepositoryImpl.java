@@ -1,4 +1,4 @@
-package com.facevisitor.api.domain.user.repo;
+package com.facevisitor.api.repository;
 
 import com.facevisitor.api.domain.face.QFaceMeta;
 import com.facevisitor.api.domain.user.QUser;

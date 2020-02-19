@@ -1,4 +1,4 @@
-package com.facevisitor.api.domain.user.repo;
+package com.facevisitor.api.repository;
 
 import com.facevisitor.api.domain.user.User;
 import org.springframework.data.jpa.repository.EntityGraph;

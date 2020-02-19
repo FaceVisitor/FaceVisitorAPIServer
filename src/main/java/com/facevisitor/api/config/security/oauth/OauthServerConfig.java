@@ -36,6 +36,12 @@ public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Value("${secret.oauth.clientSecurity}")
     String clientSecurity;
 
+    //AccessToken Expired 30 days
+    int access_token_expired = 60 * 60 * 24 * 30;
+
+    //Refresh Token Expired 30 days
+    int refresh_token_expired = 60 * 60 * 24 * 30;
+
 //    @Override
 //    public void configure(AuthorizationServerSecurityConfigurer security) {
 //        security.passwordEncoder(passwordEncoder);
@@ -46,8 +52,8 @@ public class OauthServerConfig extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                 .withClient(clientId)
                 .secret(passwordEncoder.encode(clientSecurity))
-                .accessTokenValiditySeconds(60 * 60 * 24) //1day
-                .refreshTokenValiditySeconds(60 * 60 * 24 * 10) //10day
+                .accessTokenValiditySeconds(access_token_expired)
+                .refreshTokenValiditySeconds(refresh_token_expired)
                 .resourceIds(SERVER_RESOURCE_ID)
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read","write");

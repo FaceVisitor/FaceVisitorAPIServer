@@ -2,7 +2,7 @@ package com.facevisitor.api.service.user;
 
 import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +33,8 @@ public class UserService {
     public Boolean exist(String email){
         return userRepository.findByEmail(email).isPresent();
     }
+
+
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(NotFoundException::new);

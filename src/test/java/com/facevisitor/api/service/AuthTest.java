@@ -1,22 +1,21 @@
 package com.facevisitor.api.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
 import com.facevisitor.api.dto.user.Join;
+import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.auth.AuthService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

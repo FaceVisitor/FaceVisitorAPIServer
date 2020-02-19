@@ -2,7 +2,7 @@ package com.facevisitor.api.service;
 
 import com.facevisitor.api.config.security.SecurityUserDetailService;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.user.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

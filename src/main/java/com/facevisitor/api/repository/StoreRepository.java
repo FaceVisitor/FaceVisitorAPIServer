@@ -1,5 +1,6 @@
-package com.facevisitor.api.domain.store;
+package com.facevisitor.api.repository;
 
+import com.facevisitor.api.domain.store.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

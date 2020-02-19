@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
     implementation('org.springframework.security.oauth:spring-security-oauth2')
     implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.0.RELEASE')
@@ -46,6 +47,7 @@ dependencies {
     implementation('io.jsonwebtoken:jjwt:0.9.0') // jwt generator
     implementation('com.google.code.gson:gson:2.8.5')
     compileOnly 'org.projectlombok:lombok'
+    compile('com.h2database:h2')
     runtimeOnly 'mysql:mysql-connector-java'
     compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '2.0.0.RELEASE'
 

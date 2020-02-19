@@ -16,7 +16,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Store extends BaseEntity {
     @Id
     @GeneratedValue
@@ -49,5 +48,6 @@ public class Store extends BaseEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     User user;
+
 
 }
