@@ -4,7 +4,7 @@ import com.facevisitor.api.common.exception.NotFoundUserException;
 import com.facevisitor.api.domain.security.Authority;
 import com.facevisitor.api.domain.security.SecurityUser;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

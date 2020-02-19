@@ -3,9 +3,9 @@ package com.facevisitor.api.owner.service;
 
 import com.facevisitor.api.common.exception.BadRequestException;
 import com.facevisitor.api.domain.security.Authority;
-import com.facevisitor.api.domain.security.AuthorityRepository;
+import com.facevisitor.api.repository.AuthorityRepository;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.dto.auth.TokenDto;
 import com.facevisitor.api.owner.dto.auth.OJoin;
 import com.facevisitor.api.owner.dto.auth.OLogin;
@@ -51,14 +51,14 @@ public class OauthService {
 
     RestTemplate restTemplate = new RestTemplate();
 
-    public void join(OJoin oJoin){
+    public User join(OJoin oJoin){
         User user = new User();
         user.setName(oJoin.getName());
         user.setEmail(oJoin.getEmail());
         user.setPassword(encodePassword(oJoin.getPassword()));
         user.setPhone(oJoin.getPhone());
         user.setAuthorities(ownerAuthority());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     private TokenDto getTokenDto(MultiValueMap<String, String> map) {

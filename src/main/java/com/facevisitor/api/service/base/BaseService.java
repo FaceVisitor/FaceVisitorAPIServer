@@ -2,7 +2,7 @@ package com.facevisitor.api.service.base;
 
 import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.domain.user.repo.UserRepository;
+import com.facevisitor.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

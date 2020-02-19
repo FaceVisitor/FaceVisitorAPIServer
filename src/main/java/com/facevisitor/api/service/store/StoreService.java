@@ -3,17 +3,13 @@ package com.facevisitor.api.service.store;
 import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.store.Store;
 import com.facevisitor.api.domain.store.StoreImage;
-import com.facevisitor.api.domain.store.StoreImageRepository;
-import com.facevisitor.api.domain.store.StoreRepository;
 import com.facevisitor.api.owner.dto.StoreDto;
+import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.service.file.FileService;
-import com.google.gson.internal.$Gson$Preconditions;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,17 +17,22 @@ import java.util.List;
 @Transactional
 public class StoreService {
 
-    @Autowired
+    final
     StoreRepository storeRepository;
 
-    @Autowired
-    StoreImageRepository storeImageRepository;
 
-    @Autowired
+
+    final
     ModelMapper modelMapper;
 
-    @Autowired
+    final
     FileService fileService;
+
+    public StoreService(StoreRepository storeRepository, ModelMapper modelMapper, FileService fileService) {
+        this.storeRepository = storeRepository;
+        this.modelMapper = modelMapper;
+        this.fileService = fileService;
+    }
 
     public List<Store> list(String email){
         return storeRepository.findByUserEmail(email);

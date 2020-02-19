@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,15 +23,39 @@ public class Goods extends BaseEntity {
 
     String vendor;
 
-    String price;
+    BigDecimal price;
 
+    BigDecimal salePrice;
+
+    Boolean active = true;
 
     @OneToMany(mappedBy = "goods" , cascade = {CascadeType.ALL}, orphanRemoval = true)
-    List<GoodsImage> images;
+    Set<GoodsImage> images = new LinkedHashSet<>();
+
+    public void addImage(GoodsImage goodsImage){
+        this.images.add(goodsImage);
+        goodsImage.setGoods(this);
+    }
+
+    public void addImages(Collection<GoodsImage> goodsImage){
+        this.images.addAll(goodsImage);
+        goodsImage.forEach(image -> {
+            image.setGoods(this);
+        });
+    }
+
 
     @JoinTable(name = "GoodsToCategory", joinColumns = {@JoinColumn(name = "goods_id",nullable = false)},inverseJoinColumns = {@JoinColumn(name = "category_id",nullable = false)})
     @ManyToMany
-    List<GoodsCategory> categories = new ArrayList<>();
+    Set<GoodsCategory> categories = new LinkedHashSet<>();
+
+    public void addCategory(GoodsCategory goodsCategory){
+        this.categories.add(goodsCategory);
+        goodsCategory.getGoods().add(this);
+    }
 
 
+    public void deleteImage(String url) {
+        this.images.removeIf(goodsImage -> goodsImage.getUrl().equals(url));
+    }
 }

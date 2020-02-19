@@ -1,7 +1,7 @@
 package com.facevisitor.api.config;
 
 import com.facevisitor.api.config.security.SecurityUserDetailService;
-import com.facevisitor.api.domain.security.AuthorityRepository;
+import com.facevisitor.api.repository.AuthorityRepository;
 import com.facevisitor.api.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

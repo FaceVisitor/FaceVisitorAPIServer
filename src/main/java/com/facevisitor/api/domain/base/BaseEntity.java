@@ -56,4 +56,5 @@ public abstract class BaseEntity implements Serializable {
     @Column(columnDefinition = "BIGINT(20) default 0")
     @JsonIgnore
     protected Long version;
+
 }
