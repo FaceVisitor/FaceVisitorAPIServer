@@ -1,18 +1,12 @@
-package com.facevisitor.api.service;
+package com.facevisitor.api.controller;
 
-import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.store.Store;
 import com.facevisitor.api.domain.store.StoreImage;
-import com.facevisitor.api.repository.StoreRepository;
-import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.owner.dto.StoreDto;
+import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.service.store.StoreService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -20,13 +14,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class StoreTest {
-
-    @Autowired
-    UserRepository userRepository;
+public class StoreTest extends BaseTest {
 
     @Autowired
     StoreRepository storeRepository;
@@ -34,32 +25,38 @@ public class StoreTest {
     @Autowired
     StoreService storeService;
 
+    String baseUrl = "/api/v1/owner/store";
+
 
     @Test
     @Transactional
-    public void create(){
+    public void create() throws Exception {
         Store store = createStore();
-        assertThat(store.getName(),is("test"));
+        mockMvc.perform(postWithUser(baseUrl)
+                .content(objectMapper.writeValueAsString(store)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
     }
 
 
     @Test
-    public void list() throws Exception{
+    public void list() throws Exception {
         String email = "sajang@facevisitor.com";
         List<Store> list = storeService.list(email);
         System.out.println(list);
     }
 
     @Test
-    public void get() throws Exception{
+    public void get() throws Exception {
         Store store = storeService.get(5L);
-        assertThat(store.getId(),is(5L));
+        assertThat(store.getId(), is(5L));
         System.out.println(store);
     }
 
     @Test
     @Transactional
-    public void update() throws Exception{
+    public void update() throws Exception {
         StoreDto.StoreRequest updated = new StoreDto.StoreRequest();
         updated.setAddress("updated address");
         updated.setName("updated Name");
@@ -70,13 +67,13 @@ public class StoreTest {
 
     @Test
     @Transactional
-    public void delete() throws Exception{
+    public void delete() throws Exception {
         storeService.delete(5L);
     }
 
     @Test
     @Transactional
-    public void addImage(){
+    public void addImage() {
         StoreImage storeImage = new StoreImage();
         storeImage.setUrl("test url");
         storeImage.setName("test name");
@@ -87,14 +84,14 @@ public class StoreTest {
 
     @Test
     @Transactional
-    public void deleteImage() throws Exception{
-        storeService.deleteImage(5L,"image url");
+    public void deleteImage() throws Exception {
+        storeService.deleteImage(5L, "image url");
         List<StoreImage> images = storeService.get(5L).getImages();
         System.out.println(images);
     }
 
 
-    public Store createStore(){
+    public Store createStore() {
         Store store = new Store();
         store.setName("test");
         store.setAddress("address");
@@ -102,10 +99,7 @@ public class StoreTest {
         StoreImage storeImage = new StoreImage();
         storeImage.setUrl("image url");
         store.addImages(Arrays.asList(storeImage));
-        User user = userRepository.findByEmail("sajang@facevisitor.com").orElseThrow(NotFoundException::new);
-        store.setUser(user);
-        Store created = storeService.create(store);
-        return created;
+        return store;
     }
 
 }

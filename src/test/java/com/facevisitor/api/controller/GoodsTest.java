@@ -4,13 +4,18 @@ package com.facevisitor.api.controller;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.goods.GoodsCategory;
 import com.facevisitor.api.domain.goods.GoodsImage;
+import com.facevisitor.api.domain.store.Store;
+import com.facevisitor.api.domain.user.User;
+import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.dto.image.ImageDto;
 import com.facevisitor.api.repository.GoodsCategoryRepository;
 import com.facevisitor.api.repository.GoodsRepository;
+import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.service.goods.GoodsCategoryService;
-import com.facevisitor.api.service.goods.GoodsService;
+import com.facevisitor.api.service.goods.GoodsOwnerService;
 import org.junit.Before;
 import org.junit.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -22,12 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class GoodsTest extends BaseTest {
 
-    String baseUrl = "/api/v1/goods";
+    String baseUrl = "/api/v1/owner/goods";
 
-    String baseCategoryUrl = "/api/v1/goods/category";
+    String baseCategoryUrl = "/api/v1/owner/goods/category";
 
     @Autowired
-    GoodsService goodsService;
+    GoodsOwnerService goodsOwnerService;
 
     @Autowired
     GoodsRepository goodsRepository;
@@ -36,16 +41,61 @@ public class GoodsTest extends BaseTest {
     GoodsCategoryRepository categoryRepository;
 
     @Autowired
+    StoreRepository storeRepository;
+
+    @Autowired
     GoodsCategoryService categoryService;
 
     GoodsCategory category = null;
 
     Goods goods = null;
 
+    Store store = null;
+
+    User user = null;
+
+    @Autowired
+    ModelMapper modelMapper;
+
     @Before
-    public void before() {
-        category = createCategory();
-        goods = createGoods();
+    public void setup() throws Exception {
+        GoodsDTO.GoodsCreateRequest goodsCreateRequest = new GoodsDTO.GoodsCreateRequest();
+        goodsCreateRequest.setActive(true);
+        goodsCreateRequest.setDescription("상품설명");
+        goodsCreateRequest.setName("상품 이름");
+        goodsCreateRequest.setPrice(BigDecimal.TEN);
+        GoodsImage goodsImage = new GoodsImage();
+        goodsImage.setName("이미지 이름");
+        goodsImage.setUrl("이미지 url");
+        goodsCreateRequest.setImages(Collections.singleton(goodsImage));
+
+
+        User user = new User();
+        user.setName("테스트 이름");
+        user.setEmail("wndudpower@gmail.com");
+        user.setPassword("3223");
+        this.user = userRepository.save(user);
+
+        Store store = new Store();
+        store.setName("매장이름");
+        store.setUser(this.user);
+        this.store = storeRepository.save(store);
+        goodsCreateRequest.setStore(this.store.getId());
+
+
+        GoodsCategory category = new GoodsCategory();
+        category.setName("카테고리 이름");
+        this.category = categoryRepository.save(category);
+        goodsCreateRequest.setCategory(this.category.getId());
+
+
+       mockMvc.perform(postWithUser(baseUrl)
+                .content(objectMapper.writeValueAsString(goodsCreateRequest)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.images").isNotEmpty())
+                .andExpect(jsonPath("$.categories").isNotEmpty())
+                .andDo(print());
+
     }
 
     @Test
@@ -55,12 +105,7 @@ public class GoodsTest extends BaseTest {
 
     @Test
     public void 상품_생성() throws Exception {
-        mockMvc.perform(postWithUser(baseUrl)
-                .content(objectMapper.writeValueAsString(goods)))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.images").exists())
-                .andExpect(jsonPath("$.categories").exists())
-                .andDo(print());
+
     }
 
     @Test
@@ -106,7 +151,8 @@ public class GoodsTest extends BaseTest {
 
     @Test
     public void 상품_카테고리_생성() throws Exception {
-        mockMvc.perform(postWithUser(baseCategoryUrl + "/").content(objectMapper.writeValueAsString(category)))
+        mockMvc.perform(postWithUser(baseCategoryUrl).content(objectMapper.writeValueAsString(category)))
+                .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.name").value(category.getName()))
                 .andDo(print());
     }
@@ -128,11 +174,15 @@ public class GoodsTest extends BaseTest {
 
     @Test
     public void 상품_카테고리_수정() throws Exception {
+
+        String oriName = category.getName();
+        category.setName("changeName");
         mockMvc.perform(putWithUser(baseCategoryUrl + "/"+category.getId()).content(objectMapper.writeValueAsString(category)))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(category.getId()))
+                .andExpect(jsonPath("$.name").value("changeName"))
                 .andDo(print());
-
+        category.setName(oriName);
     }
 
     @Test
@@ -141,14 +191,15 @@ public class GoodsTest extends BaseTest {
                 .andExpect(status().is2xxSuccessful());
     }
 
-    public GoodsCategory createCategory() {
-        GoodsCategory goodsCategory = new GoodsCategory();
-        goodsCategory.setName("카테고리 이름");
-        return categoryService.create(goodsCategory);
-    }
 
     public Goods createGoods() {
-        GoodsCategory category = createCategory();
+        GoodsCategory category = new GoodsCategory();
+        category.setName("카테고리 이름");
+        this.category = categoryRepository.save(category);
+
+        Store store = new Store();
+        store.setName("매장이름");
+        Store store1 = storeRepository.save(store);
         GoodsImage goodsImage = new GoodsImage();
         goodsImage.setName("이미지 TEST");
         goodsImage.setUrl("image url");
@@ -157,9 +208,9 @@ public class GoodsTest extends BaseTest {
         goods.setName("상품이름");
         goods.setVendor("제조사 이름");
         goods.setPrice(BigDecimal.valueOf(100L));
-        goods.addCategory(category);
-        goods.setImages(Collections.singleton(goodsImage));
-        return goodsService.create(goods);
+//        goods.addCategory(category);
+        goods.addImage(goodsImage);
+        return goods;
     }
 
 

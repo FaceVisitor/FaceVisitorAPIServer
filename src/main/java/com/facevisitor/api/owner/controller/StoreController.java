@@ -11,28 +11,35 @@ import com.facevisitor.api.service.base.BaseService;
 import com.facevisitor.api.service.store.StoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/owner/store")
 public class StoreController {
 
-    @Autowired
+    final
     StoreService storeService;
 
-    @Autowired
+    final
     BaseService baseService;
 
-    @Autowired
+    final
     ModelMapper modelMapper;
+
+    public StoreController(StoreService storeService, BaseService baseService, ModelMapper modelMapper) {
+        this.storeService = storeService;
+        this.baseService = baseService;
+        this.modelMapper = modelMapper;
+    }
 
     @GetMapping
     public ResponseEntity list(Principal principal){
@@ -40,18 +47,17 @@ public class StoreController {
             throw new UnAuthorizedException();
         }
         List<Store> list = storeService.list(principal.getName());
-        return ResponseEntity.ok(list);
+        CollectionModel<Store> stores = new CollectionModel<>(list);
+        stores.add(linkTo(GoodsCategoryController.class).withSelfRel());
+        return ResponseEntity.ok(stores);
     }
 
     @PostMapping
     public ResponseEntity create(Principal principal,@RequestBody StoreDto.StoreRequest storeRequest){
-        Store map = modelMapper.map(storeRequest, Store.class);
-        List<StoreImage> images = storeRequest.getImages().stream().map(imageDto -> modelMapper.map(imageDto, StoreImage.class)).collect(Collectors.toList());
-        map.getImages().clear();
-        map.addImages(images);
+        Store store = modelMapper.map(storeRequest, Store.class);
         User user = baseService.currentUser(principal.getName());
-        map.setUser(user);
-        Store created = storeService.create(map);
+        store.setUser(user);
+        Store created = storeService.create(store);
         return ResponseEntity.created(URI.create("/owner/store")).body(created);
     }
 

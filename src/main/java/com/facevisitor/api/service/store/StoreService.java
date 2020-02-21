@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,8 +18,6 @@ public class StoreService {
 
     final
     StoreRepository storeRepository;
-
-
 
     final
     ModelMapper modelMapper;
@@ -39,6 +36,7 @@ public class StoreService {
     }
 
     public Store create(Store store){
+        store.getImages().forEach(store::addImage);
         return storeRepository.save(store);
     }
 
@@ -67,8 +65,7 @@ public class StoreService {
 
     public void addImage(Long store_id, StoreImage storeImage){
         Store store = get(store_id);
-        store.addImages(Collections.singletonList(storeImage));
-        storeRepository.save(store);
+        store.addImage(storeImage);
     }
 
     public void deleteImage(Long store_id, String url) {

@@ -39,7 +39,8 @@ public class GoodsCategoryService {
     }
 
     public void delete(Long id){
-        categoryRepository.deleteById(id);
+        GoodsCategory goodsCategory = get(id);
+        categoryRepository.delete(goodsCategory);
     }
 
 
