@@ -82,7 +82,6 @@ public class GoodsTest extends BaseTest {
         this.store = storeRepository.save(store);
         goodsCreateRequest.setStore(this.store.getId());
 
-
         GoodsCategory category = new GoodsCategory();
         category.setName("카테고리 이름");
         this.category = categoryRepository.save(category);
@@ -103,10 +102,6 @@ public class GoodsTest extends BaseTest {
         mockMvc.perform(getWithUser(baseUrl));
     }
 
-    @Test
-    public void 상품_생성() throws Exception {
-
-    }
 
     @Test
     public void 상품_조회() throws Exception {

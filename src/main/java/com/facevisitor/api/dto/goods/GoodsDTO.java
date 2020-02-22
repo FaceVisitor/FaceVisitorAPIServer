@@ -100,8 +100,27 @@ public class GoodsDTO {
 
         Set<GoodsImage> images = new LinkedHashSet<>();
 
+    }
 
+    @Data
+    public static class GoodsUserDetailResponse{
+        Long id;
 
+        String name;
+
+        String vendor;
+
+        BigDecimal price;
+
+        BigDecimal salePrice;
+
+        String description;
+
+        Boolean active;
+
+        GoodsCategory category;
+
+        Set<GoodsImage> images = new LinkedHashSet<>();
     }
 
 

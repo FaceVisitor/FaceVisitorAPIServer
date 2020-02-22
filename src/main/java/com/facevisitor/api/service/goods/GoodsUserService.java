@@ -1,5 +1,6 @@
 package com.facevisitor.api.service.goods;
 
+import com.facevisitor.api.common.exception.NotFoundGoodsException;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.repository.GoodsRepository;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,10 @@ public class GoodsUserService {
 
     public GoodsUserService(GoodsRepository goodsRepository) {
         this.goodsRepository = goodsRepository;
+    }
+
+    public Goods get(Long goods_id){
+        return goodsRepository.get(goods_id).orElseThrow(() -> new NotFoundGoodsException(goods_id));
     }
 
     public List<Goods> initRecommend() {
