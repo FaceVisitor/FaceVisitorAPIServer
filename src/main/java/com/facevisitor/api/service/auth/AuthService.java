@@ -1,6 +1,7 @@
 package com.facevisitor.api.service.auth;
 
 import com.facevisitor.api.common.exception.BadRequestException;
+import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.common.exception.UnAuthorizedException;
 import com.facevisitor.api.common.utils.ServerUtils;
 import com.facevisitor.api.config.security.jwt.JwtUtils;
@@ -8,10 +9,10 @@ import com.facevisitor.api.domain.face.FaceId;
 import com.facevisitor.api.domain.face.FaceImage;
 import com.facevisitor.api.domain.face.FaceMeta;
 import com.facevisitor.api.domain.security.Authority;
-import com.facevisitor.api.repository.AuthorityRepository;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.dto.user.Join;
+import com.facevisitor.api.repository.AuthorityRepository;
+import com.facevisitor.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +188,7 @@ public class AuthService {
 
     public Set<Authority> userAuthority() {
         HashSet<Authority> authorities = new HashSet<>();
-        authorities.add(authorityRepository.findByRole("USER"));
+        authorities.add(authorityRepository.findByRole("USER").orElseThrow(NotFoundException::new));
         return authorities;
     }
 }

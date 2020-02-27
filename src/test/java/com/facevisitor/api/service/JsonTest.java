@@ -1,6 +1,6 @@
 package com.facevisitor.api.service;
 
-import com.facevisitor.api.controller.BaseTest;
+import com.facevisitor.api.BaseTest;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.goods.GoodsImage;
 import com.facevisitor.api.dto.goods.GoodsDTO;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JsonTest extends BaseTest {
+
 
     @Autowired
     ModelMapper modelMapper;

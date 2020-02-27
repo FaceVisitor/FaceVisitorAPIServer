@@ -43,11 +43,11 @@ public class GoodsOwnerService {
     this.categoryRepository = categoryRepository;
   }
 
-
+  @Transactional(readOnly = true)
   public Page<Goods> page(Pageable pageable,String searchQuery){
     return goodsRepository.page(searchQuery,pageable);
   }
-
+  @Transactional(readOnly = true)
   public Goods get(Long id){
     return goodsRepository.get(id).orElseThrow(()-> new NotFoundGoodsException(id));
   }

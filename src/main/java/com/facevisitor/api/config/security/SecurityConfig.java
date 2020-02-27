@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailService = userDetailService;
     }
 
+
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -40,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
             web.ignoring().antMatchers("/api/v1/auth/**").and().ignoring().antMatchers("/api/v1/owner/auth/**");
     }
 

@@ -1,4 +1,4 @@
-package com.facevisitor.api.controller;
+package com.facevisitor.api;
 
 import com.facevisitor.api.domain.store.Store;
 import com.facevisitor.api.domain.store.StoreImage;
@@ -26,6 +26,7 @@ public class StoreTest extends BaseTest {
     StoreService storeService;
 
     String baseUrl = "/api/v1/owner/store";
+
 
 
     @Test

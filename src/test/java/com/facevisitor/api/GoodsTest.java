@@ -1,4 +1,4 @@
-package com.facevisitor.api.controller;
+package com.facevisitor.api;
 
 
 import com.facevisitor.api.domain.goods.Goods;
@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GoodsTest extends BaseTest {
+
 
     String baseUrl = "/api/v1/owner/goods";
 

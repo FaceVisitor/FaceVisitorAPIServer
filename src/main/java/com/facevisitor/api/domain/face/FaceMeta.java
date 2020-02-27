@@ -8,9 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity(name = "UserFace")
@@ -28,11 +26,11 @@ public class FaceMeta extends BaseEntity {
 
     String gender;
 
-    @OneToMany(mappedBy = "faceMeta",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "faceMeta",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     Set<FaceId> faceId = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "faceMeta", cascade = CascadeType.ALL,orphanRemoval = true)
-    List<FaceImage> faceImages = new ArrayList<>();
+    Set<FaceImage> faceImages = new LinkedHashSet<>();
 
     public void addFaceImage(FaceImage faceImage){
         faceImage.setFaceMeta(this);

@@ -40,6 +40,9 @@ public class Goods extends BaseEntity {
     @JsonIgnore
     Store store;
 
+    @Transient
+    Boolean like;
+
     @OneToMany(mappedBy = "goods", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.EAGER)
     Set<GoodsImage> images = new LinkedHashSet<>();
 

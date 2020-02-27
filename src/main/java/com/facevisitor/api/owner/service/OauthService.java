@@ -2,15 +2,15 @@ package com.facevisitor.api.owner.service;
 
 
 import com.facevisitor.api.common.exception.BadRequestException;
+import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.security.Authority;
-import com.facevisitor.api.repository.AuthorityRepository;
 import com.facevisitor.api.domain.user.User;
-import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.dto.auth.TokenDto;
 import com.facevisitor.api.owner.dto.auth.OJoin;
 import com.facevisitor.api.owner.dto.auth.OLogin;
+import com.facevisitor.api.repository.AuthorityRepository;
+import com.facevisitor.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -40,18 +40,34 @@ public class OauthService {
     @Value("${spring.base_url}")
     String base_url;
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     AuthorityRepository authorityRepository;
 
-    @Autowired
+    final
     PasswordEncoder passwordEncoder;
 
     RestTemplate restTemplate = new RestTemplate();
 
+    public OauthService(UserRepository userRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.authorityRepository = authorityRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public User join(OJoin oJoin){
+        User user = new User();
+        user.setName(oJoin.getName());
+        user.setEmail(oJoin.getEmail());
+        user.setPassword(passwordEncoder.encode(oJoin.getPassword()));
+        user.setPhone(oJoin.getPhone());
+        user.setAuthorities(ownerAuthority());
+        return userRepository.save(user);
+    }
+
+    public User adminJoin(OJoin oJoin){
         User user = new User();
         user.setName(oJoin.getName());
         user.setEmail(oJoin.getEmail());
@@ -96,7 +112,13 @@ public class OauthService {
 
     public Set<Authority> ownerAuthority() {
         HashSet<Authority> authorities = new HashSet<>();
-        authorities.add(authorityRepository.findByRole("OWNER"));
+        authorities.add(authorityRepository.findByRole("OWNER").orElseThrow(NotFoundException::new));
+        return authorities;
+    }
+
+    public Set<Authority> adminAuthority() {
+        HashSet<Authority> authorities = new HashSet<>();
+        authorities.add(authorityRepository.findByRole("SUPER").orElseThrow(NotFoundException::new));
         return authorities;
     }
 

@@ -1,4 +1,4 @@
-package com.facevisitor.api.controller;
+package com.facevisitor.api;
 
 import com.facevisitor.api.dto.user.Join;
 import com.facevisitor.api.dto.user.Login;

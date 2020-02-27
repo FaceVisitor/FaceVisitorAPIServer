@@ -1,6 +1,7 @@
 package com.facevisitor.api.dto.user;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,16 +10,20 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class Login {
-    @Getter
-    @Setter
+
+    @Data
+    @AllArgsConstructor
     public static class Request{
         @NotEmpty(message = "얼굴을 인식하지 못했습니다.")
         List<String> faceId;
 
+        public Request() {
+
+        }
     }
-    @Getter
-    @Setter
+    @Data
     @AllArgsConstructor
     public static class Response{
         String access_token;
@@ -26,8 +31,7 @@ public class Login {
         String createdAt;
     }
 
-    @Getter
-    @Setter
+    @Data
     @AllArgsConstructor
     public static class DirectResponse{
         String username;

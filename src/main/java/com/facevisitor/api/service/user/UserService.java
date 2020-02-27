@@ -1,36 +1,45 @@
 package com.facevisitor.api.service.user;
 
 import com.facevisitor.api.common.exception.NotFoundException;
+import com.facevisitor.api.common.exception.NotFoundGoodsException;
+import com.facevisitor.api.common.exception.NotFoundUserException;
+import com.facevisitor.api.domain.base.BaseEntity;
+import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.user.User;
+import com.facevisitor.api.repository.GoodsRepository;
 import com.facevisitor.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Transactional
 public class UserService {
 
-    private final UserRepository userRepository;
+    final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    final
+    GoodsRepository goodsRepository;
 
-    private final ModelMapper modelMapper;
+    final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, GoodsRepository goodsRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+        this.goodsRepository = goodsRepository;
     }
 
 
     @Transactional(readOnly = true)
-    public Boolean exist(String email){
+    public Boolean exist(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
@@ -39,9 +48,10 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
     }
+
     @Transactional(readOnly = true)
-    public User getUserByFaceIds(List<String> faceId){
-          return userRepository.findByFaceIds(faceId).orElseThrow(NotFoundException::new);
+    public User getUserByFaceIds(List<String> faceId) {
+        return userRepository.findByFaceIds(faceId).orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
@@ -56,13 +66,33 @@ public class UserService {
         return ori;
     }
 
-    public void deleteUser(Long id){
+    public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         user.setAuthorities(null);
         userRepository.deleteById(id);
 
     }
 
+    public boolean likeGoods(String email, Long goods_id) {
+        User user = userRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
+        Set<Goods> existGoods = user.getGoodsLike().stream().filter(likeGoods -> likeGoods.getId().equals(goods_id)).collect(Collectors.toSet());
+        //좋아요 해제
+        if (existGoods.size() > 0) {
+            user.removeGoodsLike(goods_id);
+            return false;
+        } else {
+            //좋아요
+            Goods goods = goodsRepository.findById(goods_id).orElseThrow(() -> new NotFoundGoodsException(goods_id));
+            user.addGoodsLike(goods);
+            return true;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Goods> listLikeGoods(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
+        return user.getGoodsLike().stream().sorted(Comparator.comparing(BaseEntity::getCreatedAt).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
 
 
 }

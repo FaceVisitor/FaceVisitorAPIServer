@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -100,6 +101,10 @@ public class GoodsDTO {
 
         Set<GoodsImage> images = new LinkedHashSet<>();
 
+        BigDecimal qtyPrice = BigDecimal.ZERO;
+
+        @Transient
+        Boolean like;
 
 
     }
