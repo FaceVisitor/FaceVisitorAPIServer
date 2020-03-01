@@ -5,12 +5,13 @@ import com.facevisitor.api.config.security.SecurityUserDetailService;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.goods.GoodsCategory;
 import com.facevisitor.api.domain.goods.GoodsImage;
+import com.facevisitor.api.domain.security.Authority;
 import com.facevisitor.api.domain.store.Store;
+import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.goods.GoodsDTO;
-import com.facevisitor.api.repository.AuthorityRepository;
-import com.facevisitor.api.repository.GoodsCategoryRepository;
-import com.facevisitor.api.repository.GoodsRepository;
-import com.facevisitor.api.repository.StoreRepository;
+import com.facevisitor.api.owner.dto.auth.OJoin;
+import com.facevisitor.api.owner.service.OauthService;
+import com.facevisitor.api.repository.*;
 import com.facevisitor.api.service.user.UserService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,18 +50,29 @@ public class DataLoader implements CommandLineRunner {
     StoreRepository storeRepository;
 
     @Autowired
+    OauthService oauthService;
+
+    @Autowired
     GoodsCategoryRepository categoryRepository;
 
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-//            createJsonGoods();
-
+//            createOwner();
+            createJsonGoods(1L,1L);
     }
 
-    public void createJsonGoods() throws IOException, ParseException {
-        Store store = storeRepository.findById(23L).orElseThrow(NotFoundException::new);
-        GoodsCategory goodsCategory = categoryRepository.findById(2L).orElseThrow(NotFoundException::new);
+    String email = "sajang@facevisitor.com";
+    String password = "asdf4112";
+    String name = "일반유저";
+
+    @Autowired
+    protected UserRepository userRepository;
+
+
+    public void createJsonGoods(Long storeId,Long goodsCategoryId) throws IOException, ParseException {
+        Store store = storeRepository.findById(storeId).orElseThrow(NotFoundException::new);
+        GoodsCategory goodsCategory = categoryRepository.findById(goodsCategoryId).orElseThrow(NotFoundException::new);
         JSONParser parser = new JSONParser();
         Object parse = parser.parse(new FileReader(new ClassPathResource("static/olive.json").getFile()));
         JSONArray jsonArray = (JSONArray) parse;
@@ -85,8 +97,28 @@ public class DataLoader implements CommandLineRunner {
         List<Goods> saved = goodsRepository.saveAll(goodsList);
     }
 
-    public void createUser() {
+    public Authority createOwnerAuthority(){
+        if (!authorityRepository.findByRole("OWNER").isPresent()) {
+            Authority authority = new Authority();
+            authority.setRole("OWNER");
+            return authorityRepository.save(authority);
+        } else {
+            return authorityRepository.findByRole("OWNER").orElseThrow(NotFoundException::new);
+        }
+    }
 
+    public User createOwner() throws Exception {
+        createOwnerAuthority();
+        if (!userRepository.findByEmail(email).isPresent()) {
+            OJoin join = new OJoin();
+            join.setEmail(email);
+            join.setPassword(password);
+            join.setName("허주영 사장");
+            join.setPhone("01026588178");
+            return oauthService.join(join);
+        } else {
+            return userRepository.findByEmail(email).get();
+        }
     }
 
 }

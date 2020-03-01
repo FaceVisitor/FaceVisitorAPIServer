@@ -77,7 +77,6 @@ public class OwnerTest extends BaseTest {
         User join1 = authService.join(join);
     }
 
-
     @Test
     public void 로그인() throws Exception {
         if (!userRepository.findByEmail(email).isPresent()) {
@@ -102,6 +101,25 @@ public class OwnerTest extends BaseTest {
 
     }
 
+    @Test
+    public void 리프레시토큰() throws Exception {
+        OLogin oLogin = new OLogin();
+        oLogin.setEmail("sajang@facevisitor.com");
+        oLogin.setPassword("asdf4112");
+        String contentAsString = mockMvc.perform(
+                post("/api/v1/owner/auth/login").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(oLogin)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        ModelMapper modelMapper = new ModelMapper();
+        TokenDto tokenDto = modelMapper.map(contentAsString, TokenDto.class);
+        String refresh_token = tokenDto.getRefresh_token();
+        HashMap<String, String> refreshToken = new HashMap<>();
+        refreshToken.put("refresh_token", refresh_token);
+        mockMvc.perform(post("/api/v1/onwer/auth/refresh_token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(refreshToken))
+        ).andExpect(status().is2xxSuccessful()).andDo(print());
+    }
+
     private TokenDto getTokenDto(MultiValueMap<String, String> map) {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, getBasicAuthHeaders());
         ResponseEntity<TokenDto> tokenResponse = restTemplate.postForEntity(base_url + "/oauth/token", request, TokenDto.class);
@@ -120,25 +138,7 @@ public class OwnerTest extends BaseTest {
         return httpHeaders;
     }
 
-    @Test
-    public void 리프레시토큰() throws Exception {
-        OLogin oLogin = new OLogin();
-        oLogin.setEmail("sajang@facevisitor.com");
-        oLogin.setPassword("asdf4112");
-        String contentAsString = mockMvc.perform(
-                post("/api/v1/owner/auth/login").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(oLogin)))
-                .andExpect(status().is2xxSuccessful())
-                .andDo(print())
-                .andReturn().getResponse().getContentAsString();
-        ModelMapper modelMapper = new ModelMapper();
-        TokenDto tokenDto = modelMapper.map(contentAsString, TokenDto.class);
-        String refresh_token = tokenDto.getRefresh_token();
-        HashMap<String, String> refreshToken = new HashMap<>();
-        refreshToken.put("refresh_token", refresh_token);
-        mockMvc.perform(post("/api/v1/onwer/auth/refresh_token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(refreshToken))
-        ).andExpect(status().is2xxSuccessful()).andDo(print());
 
-    }
 
     @Test
     public void 매장리스트조회() throws Exception {

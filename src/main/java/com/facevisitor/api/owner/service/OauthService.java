@@ -57,15 +57,7 @@ public class OauthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User join(OJoin oJoin){
-        User user = new User();
-        user.setName(oJoin.getName());
-        user.setEmail(oJoin.getEmail());
-        user.setPassword(passwordEncoder.encode(oJoin.getPassword()));
-        user.setPhone(oJoin.getPhone());
-        user.setAuthorities(ownerAuthority());
-        return userRepository.save(user);
-    }
+
 
     public User adminJoin(OJoin oJoin){
         User user = new User();
@@ -93,6 +85,16 @@ public class OauthService {
         httpHeaders.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.setBasicAuth(clientId, clientSecurity);
         return httpHeaders;
+    }
+
+    public User join(OJoin oJoin){
+        User user = new User();
+        user.setName(oJoin.getName());
+        user.setEmail(oJoin.getEmail());
+        user.setPassword(passwordEncoder.encode(oJoin.getPassword()));
+        user.setPhone(oJoin.getPhone());
+        user.setAuthorities(ownerAuthority());
+        return userRepository.save(user);
     }
 
     public TokenDto login(OLogin login) {

@@ -56,7 +56,7 @@ public class FvOrderController {
         if(principal == null){
             throw new UnAuthorizedException();
         }
-        return ResponseEntity.ok(orderService.payMultipleGoods(principal.getName(),payRequest));
+        return ResponseEntity.ok(orderService.multiplePay(principal.getName(),payRequest));
     }
 
 }

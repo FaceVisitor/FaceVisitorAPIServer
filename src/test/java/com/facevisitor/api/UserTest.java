@@ -36,7 +36,7 @@ public class UserTest extends BaseTest {
     }
 
     @Test
-    public void 유저정보with토큰() throws Exception {
+    public void 유저정보() throws Exception {
         mockMvc.perform(
                 postWithUser(baseUrl + "me"))
                 .andExpect(status().is2xxSuccessful())

@@ -1,5 +1,6 @@
 package com.facevisitor.api.domain.point;
 
+import com.facevisitor.api.common.exception.BadRequestException;
 import com.facevisitor.api.domain.base.BaseEntity;
 import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.domain.user.User;
@@ -9,6 +10,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+
+import static com.facevisitor.api.common.string.exception.ExceptionString.BAD_POINT;
 
 
 @Entity
@@ -55,7 +58,8 @@ public class Point extends BaseEntity {
         point.setOrder(fvOrder);
         User user = fvOrder.getUser();
         point.setUser(user);
-        BigDecimal pointValue = BigDecimal.valueOf(fvOrder.getPayPrice().doubleValue() * POINT_PERCENT).setScale(0,BigDecimal.ROUND_HALF_UP);
+        BigDecimal pointValue = BigDecimal.valueOf(fvOrder.getPayPrice().doubleValue() * POINT_PERCENT)
+                .setScale(0,BigDecimal.ROUND_HALF_UP);
         user.savePoint(pointValue);
         point.setPointValue(pointValue);
         fvOrder.setSavePoint(point);
@@ -64,19 +68,25 @@ public class Point extends BaseEntity {
     }
 
     public static Point usePoint(FVOrder fvOrder,BigDecimal usePoint) {
-        Point point = new Point();
-        point.setStatus(Status.MINUS);
-        point.setOrder(fvOrder);
         User user = fvOrder.getUser();
-        point.setUser(user);
-        point.setPointValue(usePoint);
-        user.usePoint(usePoint);
-        fvOrder.setPoint(point);
-        fvOrder.getUser().getPoints().add(point);
-        return point;
+        if(validUsePoint(user,usePoint)){
+            Point point = new Point();
+            point.setStatus(Status.MINUS);
+            point.setOrder(fvOrder);
+
+            point.setUser(user);
+            point.setPointValue(usePoint);
+            user.usePoint(usePoint);
+            fvOrder.setPoint(point);
+            fvOrder.getUser().getPoints().add(point);
+            return point;
+        }else{
+            throw new BadRequestException(BAD_POINT);
+        }
     }
 
-
-
-
+    public static boolean validUsePoint(User user,BigDecimal usePoint){
+        BigDecimal havePoint = user.getPoint();
+        return havePoint.doubleValue()>0 && havePoint.doubleValue()>=usePoint.doubleValue();
+    }
 }

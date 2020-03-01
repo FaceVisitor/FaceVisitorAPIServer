@@ -61,8 +61,8 @@ public class BaseTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    String email = "wndudpower@gmail.com";
-    String password = "1234";
+    String email = "sajang@facevisitor.com";
+    String password = "asdf4112";
     String name = "일반유저";
 
     @Value("${secret.oauth.clientId}")

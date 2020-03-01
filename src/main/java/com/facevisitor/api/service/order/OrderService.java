@@ -54,8 +54,6 @@ public class OrderService {
     public FVOrder directPay(String userEmail, OrderDTO.OrderDirectPayRequest payRequest) {
         //set
         FVOrder fvOrder = new FVOrder();
-
-
         Goods goods = payRequest.getGoods();
         Goods persistGoods = goodsUserService.get(goods.getId());
 
@@ -90,11 +88,9 @@ public class OrderService {
         return orderRepository.save(fvOrder);
     }
 
-    public FVOrder payMultipleGoods(String userEmail, OrderDTO.OrderMultipleGoodsPayRequest payRequest) {
+    public FVOrder multiplePay(String userEmail, OrderDTO.OrderMultipleGoodsPayRequest payRequest) {
         //set
         FVOrder fvOrder = new FVOrder();
-
-//        List<Goods> pGoodsList = goodsRepository.findAllById(goods);
         payRequest.getLineItems().forEach(orderLineItem -> {
             Goods pGoods = goodsRepository.findById(orderLineItem.getGoods().getId()).orElseThrow(NotFoundGoodsException::new);
             orderLineItem.setGoods(pGoods);

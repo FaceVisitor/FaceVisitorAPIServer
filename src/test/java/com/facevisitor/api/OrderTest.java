@@ -29,7 +29,7 @@ public class OrderTest extends BaseTest {
     double point_pecent = 0.07;
 
     @Test
-    public void 주문_결제_포인트X() throws Exception {
+    public void 주문_결제_포인트사용X() throws Exception {
         User owner = createOwner();
         owner.setPoint(BigDecimal.ZERO);
         OrderDTO.OrderDirectPayRequest payRequest = new OrderDTO.OrderDirectPayRequest();
@@ -55,7 +55,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test
-    public void 주문_결제_포인트O() throws Exception {
+    public void 주문_결제_포인트사용O() throws Exception {
         BigDecimal productPrice = BigDecimal.valueOf(100);
         BigDecimal originalPoint = BigDecimal.valueOf(100);
         BigDecimal usePoint = BigDecimal.valueOf(10);
@@ -82,11 +82,10 @@ public class OrderTest extends BaseTest {
                 .andDo(print());
 
         assertThat(owner.getPoint()).isEqualTo(originalPoint.subtract(usePoint).add(finalPoint));
-
     }
 
     @Test
-    public void 주문_여러상품_결제_포인트X() throws Exception {
+    public void 주문_여러상품_결제_포인트사용X() throws Exception {
         User owner = createOwner();
         OrderDTO.OrderMultipleGoodsPayRequest payRequest = new OrderDTO.OrderMultipleGoodsPayRequest();
         Set<OrderLineItem> orderLineItemList = new LinkedHashSet<>();
@@ -136,7 +135,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test
-    public void 주문_여러상품_결제_포인트O() throws Exception {
+    public void 주문_여러상품_결제_포인트사용O() throws Exception {
         BigDecimal havePoint = BigDecimal.valueOf(100);
         BigDecimal usePoint = BigDecimal.valueOf(50);
         BigDecimal nowPoint = havePoint.subtract(usePoint);

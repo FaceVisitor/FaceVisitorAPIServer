@@ -26,7 +26,7 @@ public class CartTest extends BaseTest {
 
     @Before
     public void setup() throws Exception {
-        createTest();
+        createCart();
 
     }
 
@@ -60,7 +60,7 @@ public class CartTest extends BaseTest {
     }
 
 
-    public void createTest() throws Exception {
+    public void createCart() throws Exception {
         User user = createOwner();
         Goods goods = new Goods();
         goods.setName("test");

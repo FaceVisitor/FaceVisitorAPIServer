@@ -62,6 +62,7 @@ public class Store extends BaseEntity {
     }
 
     public void addImage(StoreImage storeImage){
+        storeImage.setStore(this);
         this.images.add(storeImage);
     }
 

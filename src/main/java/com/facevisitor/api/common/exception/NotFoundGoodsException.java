@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serializable;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class NotFoundGoodsException extends RuntimeException implements Serializable {
+public class NotFoundGoodsException extends NotFoundException implements Serializable {
 
     private static final long serialVersionUID = 8087908946312578899L;
 

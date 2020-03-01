@@ -4,16 +4,11 @@ import com.facevisitor.api.dto.user.Join;
 import com.facevisitor.api.dto.user.Login;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -22,10 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest
-public class AuthTest {
+public class AuthTest extends BaseTest {
     @Value("${secret.oauth.clientId}")
     String clientId;
 
@@ -51,9 +43,7 @@ public class AuthTest {
     }
 
 
-
     @Test
-    @Transactional
     public void 회원가입() throws Exception {
         Join join = new Join();
         join.setEmail("test.com");
@@ -61,11 +51,13 @@ public class AuthTest {
         join.setLowAge(22);
         join.setHighAge(24);
         join.setGender("Male");
-        join.setFaceIds(Arrays.asList("testface1","testface2"));
-        join.setFaceImageUrl(Arrays.asList("url1","url2"));
+        join.setFaceIds(Arrays.asList("testface1", "testface2"));
+        join.setFaceImageUrl(Arrays.asList("url1", "url2"));
         join.setPhone("01026588178");
         mockMvc.perform(
-                post("/api/v1/auth/join").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(join)))
+                post("/api/v1/auth/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(join)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
     }
@@ -73,7 +65,7 @@ public class AuthTest {
     @Test
     public void 다이렉트_로그인() throws Exception {
         Login.Request request = new Login.Request();
-        request.setFaceId(Arrays.asList("98373c74-b0bd-40bc-9b39-8174999dd6cf"));
+        request.setFaceId(Arrays.asList("495aa180-55ac-4c06-be15-e0b45366b1ec"));
         mockMvc.perform(
                 post("/api/v1/auth/direct_login").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
@@ -87,7 +79,7 @@ public class AuthTest {
     @Test
     public void 로그인() throws Exception {
         Login.Request request = new Login.Request();
-        request.setFaceId(Arrays.asList("98373c74-b0bd-40bc-9b39-8174999dd6cf"));
+        request.setFaceId(Arrays.asList("495aa180-55ac-4c06-be15-e0b45366b1ec"));
         mockMvc.perform(
                 post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())

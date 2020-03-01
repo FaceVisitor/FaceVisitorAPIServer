@@ -35,6 +35,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.facevisitor.api.common.string.exception.ExceptionString.NOT_FOUND_FACE;
+
 @Service
 @Transactional
 @Slf4j
@@ -62,6 +64,7 @@ public class AuthService {
     ModelMapper modelMapper;
 
 
+
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -74,11 +77,11 @@ public class AuthService {
     public Map<String,String> login(List<String> faceIds) {
         User user = userRepository.findByFaceIds(faceIds).orElse(null);
         if(user == null){
-            throw new BadRequestException("얼굴을 찾지 못했습니다..");
+            throw new BadRequestException(NOT_FOUND_FACE);
         }
 
         String accessToken = jwtUtils.createAccessToken(user.getEmail());
-        String refreshToken = jwtUtils.createAccessToken(user.getEmail());
+        String refreshToken = jwtUtils.createRefreshToken(user.getEmail());
         HashMap<String,String> loginMeta = new HashMap<>();
         loginMeta.put("access_token", accessToken);
         loginMeta.put("refresh_token",refreshToken);
@@ -142,7 +145,8 @@ public class AuthService {
         faceMeta.setGender(join.getGender());
         faceMeta.setLowAge(join.getLowAge());
         faceMeta.setHighAge(join.getHighAge());
-        List<FaceId> faceIds = join.getFaceIds().stream().map(id -> FaceId.builder().faceId(id).build()).collect(Collectors.toList());
+        List<FaceId> faceIds = join.getFaceIds().stream()
+                .map(id -> FaceId.builder().faceId(id).build()).collect(Collectors.toList());
         for(FaceId id : faceIds){
             faceMeta.addFaceId(id);
         }
@@ -191,4 +195,5 @@ public class AuthService {
         authorities.add(authorityRepository.findByRole("USER").orElseThrow(NotFoundException::new));
         return authorities;
     }
+
 }
