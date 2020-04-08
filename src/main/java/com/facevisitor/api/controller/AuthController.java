@@ -65,7 +65,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errors);
         }
         List<String> faceIds = loginRequest.getFaceId();
-        if(!(faceIds.size() >0)){
+        if (!(faceIds.size() > 0)) {
             throw new NotFoundException();
         }
 
@@ -74,7 +74,8 @@ public class AuthController {
         String refresh_token = login.get("refresh_token");
         String createdAt = login.get("createdAt");
         User userByFaceIds = userService.getUserByFaceIds(faceIds);
-        Login.DirectResponse response = new Login.DirectResponse(userByFaceIds.getName(),access_token,refresh_token,createdAt);
+        Login.DirectResponse response =
+                new Login.DirectResponse(userByFaceIds.getName(), access_token, refresh_token, createdAt);
         return ResponseEntity.ok(response);
     }
 

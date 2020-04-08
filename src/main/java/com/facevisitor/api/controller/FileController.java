@@ -1,6 +1,7 @@
 package com.facevisitor.api.controller;
 
 import com.facevisitor.api.service.file.FileService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,13 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/file")
+@AllArgsConstructor
 public class FileController {
 
-    final FileService fileService;
-
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
+    FileService fileService;
 
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile multipartFile) {

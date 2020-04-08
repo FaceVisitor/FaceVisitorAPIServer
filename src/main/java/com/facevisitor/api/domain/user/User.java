@@ -7,6 +7,7 @@ import com.facevisitor.api.domain.face.FaceMeta;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.point.Point;
 import com.facevisitor.api.domain.security.Authority;
+import com.facevisitor.api.domain.store.Store;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ import static javax.persistence.CascadeType.REMOVE;
 @ToString(exclude = {"authorities", "faceMeta"})
 public class User extends BaseEntity {
 
-    @OneToOne(cascade = ALL,orphanRemoval = true)
+    @OneToOne(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "face_meta_id")
     @JsonIgnore
     FaceMeta faceMeta;
@@ -38,7 +39,9 @@ public class User extends BaseEntity {
     private Long id;
     @Column(unique = true, nullable = false)
     private String email;
-    private String password;
+    @OneToMany(mappedBy = "user", cascade = ALL)
+    @JsonIgnore
+    List<UserToStore> userToStores = new ArrayList<>();
     private String name;
     private String phone;
 
@@ -47,7 +50,7 @@ public class User extends BaseEntity {
     @JoinTable(name = "UserToAuthority", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "auth_id")})
     private Set<Authority> authorities = new LinkedHashSet<>();
 
-    public void addAuth(Authority authority){
+    public void addAuth(Authority authority) {
         this.authorities.add(authority);
     }
 
@@ -86,18 +89,26 @@ public class User extends BaseEntity {
         this.setFaceMeta(meta);
     }
 
-    public void savePoint(BigDecimal point){
+    public void savePoint(BigDecimal point) {
         this.point = this.point.add(point);
     }
 
-    public void usePoint(BigDecimal point){
-        if(this.point.doubleValue() < point.doubleValue()){
+    public void usePoint(BigDecimal point) {
+        if (this.point.doubleValue() < point.doubleValue()) {
             throw new BadRequestException("포인트가 부족합니다");
         }
         this.point = this.point.subtract(point);
     }
 
+    @JsonIgnore
+    private String password;
 
+    public void addStore(Store store) {
+        UserToStore userToStore = new UserToStore();
+        userToStore.setStore(store);
+        userToStore.setUser(this);
+        this.userToStores.add(userToStore);
+    }
 
 
 }

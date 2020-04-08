@@ -13,6 +13,7 @@ import com.facevisitor.api.repository.GoodsRepository;
 import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.service.goods.GoodsCategoryService;
 import com.facevisitor.api.service.goods.GoodsOwnerService;
+import com.facevisitor.api.service.goods.GoodsUserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,6 +39,9 @@ public class GoodsTest extends BaseTest {
 
     @Autowired
     GoodsRepository goodsRepository;
+
+    @Autowired
+    GoodsUserService goodsUserService;
 
     @Autowired
     GoodsCategoryRepository categoryRepository;
@@ -178,7 +183,7 @@ public class GoodsTest extends BaseTest {
 
         String oriName = category.getName();
         category.setName("changeName");
-        mockMvc.perform(putWithUser(baseCategoryUrl + "/"+category.getId()).content(objectMapper.writeValueAsString(category)))
+        mockMvc.perform(putWithUser(baseCategoryUrl + "/" + category.getId()).content(objectMapper.writeValueAsString(category)))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value("changeName"))
@@ -187,8 +192,15 @@ public class GoodsTest extends BaseTest {
     }
 
     @Test
+    public void 상품_csv() throws Exception {
+
+        List<GoodsDTO.GoodsListForCSVResponse> all = goodsUserService.all();
+        System.out.println(goodsUserService.all());
+    }
+
+    @Test
     public void 상품_카테고리_삭제() throws Exception {
-        mockMvc.perform(deleteWithUser(baseCategoryUrl + "/"+category.getId()))
+        mockMvc.perform(deleteWithUser(baseCategoryUrl + "/" + category.getId()))
                 .andExpect(status().is2xxSuccessful());
     }
 

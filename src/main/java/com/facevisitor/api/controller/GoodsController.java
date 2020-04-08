@@ -3,32 +3,23 @@ package com.facevisitor.api.controller;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.service.goods.GoodsUserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/goods")
 @Slf4j
+@AllArgsConstructor
 public class GoodsController {
 
-    final
     GoodsUserService goodsService;
 
-    @Autowired
     ModelMapper modelMapper;
-
-    public GoodsController(GoodsUserService goodsService) {
-        this.goodsService = goodsService;
-    }
-
 
     @GetMapping("{id}")
     public ResponseEntity detail(@PathVariable Long id){
@@ -54,12 +45,20 @@ public class GoodsController {
     }
 
     @GetMapping("init/history")
-    public ResponseEntity initHistory(){
+    public ResponseEntity initHistory() {
         List<Goods> goods = goodsService.initHistory();
         return ResponseEntity.ok(goods);
     }
 
+    @PostMapping("json")
+    public ResponseEntity initJson() {
+        return ResponseEntity.ok().build();
+    }
 
+    @GetMapping
+    public ResponseEntity all() {
+        return ResponseEntity.ok(goodsService.all());
+    }
 
 
 }

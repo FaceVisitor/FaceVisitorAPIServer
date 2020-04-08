@@ -5,6 +5,7 @@ import com.facevisitor.api.common.exception.UnAuthorizedException;
 import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.dto.order.OrderDTO;
 import com.facevisitor.api.service.order.OrderService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,13 @@ import java.security.Principal;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/order")
+@AllArgsConstructor
 public class FvOrderController {
 
-    final
     OrderService orderService;
 
-    final
     ModelMapper modelMapper;
 
-    public FvOrderController(OrderService orderService, ModelMapper modelMapper) {
-        this.orderService = orderService;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping("/{order_id}")
     ResponseEntity get(@PathVariable  Long order_id){

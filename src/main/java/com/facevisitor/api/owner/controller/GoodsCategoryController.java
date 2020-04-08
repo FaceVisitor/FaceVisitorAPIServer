@@ -3,6 +3,7 @@ package com.facevisitor.api.owner.controller;
 import com.facevisitor.api.domain.goods.GoodsCategory;
 import com.facevisitor.api.resource.GoodsCategoryResource;
 import com.facevisitor.api.service.goods.GoodsCategoryService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -18,21 +19,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/owner/goods/category")
+@AllArgsConstructor
 public class GoodsCategoryController {
 
-    final GoodsCategoryService categoryService;
+    GoodsCategoryService categoryService;
 
-    final
     PagedResourcesAssembler pagedResourcesAssembler;
 
-    final
     ModelMapper modelMapper;
 
-    public GoodsCategoryController(GoodsCategoryService categoryService, PagedResourcesAssembler pagedResourcesAssembler, ModelMapper modelMapper) {
-        this.categoryService = categoryService;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping
     public ResponseEntity list() {

@@ -75,14 +75,16 @@ public class UserService {
 
     public boolean likeGoods(String email, Long goods_id) {
         User user = userRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
-        Set<Goods> existGoods = user.getGoodsLike().stream().filter(likeGoods -> likeGoods.getId().equals(goods_id)).collect(Collectors.toSet());
+        Set<Goods> existGoods = user.getGoodsLike().stream()
+                .filter(likeGoods -> likeGoods.getId().equals(goods_id)).collect(Collectors.toSet());
         //좋아요 해제
         if (existGoods.size() > 0) {
             user.removeGoodsLike(goods_id);
             return false;
         } else {
             //좋아요
-            Goods goods = goodsRepository.findById(goods_id).orElseThrow(() -> new NotFoundGoodsException(goods_id));
+            Goods goods = goodsRepository.findById(goods_id)
+                    .orElseThrow(() -> new NotFoundGoodsException(goods_id));
             user.addGoodsLike(goods);
             return true;
         }
@@ -91,7 +93,9 @@ public class UserService {
     @Transactional(readOnly = true)
     public Set<Goods> listLikeGoods(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
-        return user.getGoodsLike().stream().sorted(Comparator.comparing(BaseEntity::getCreatedAt).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+        return user.getGoodsLike()
+                .stream().sorted(Comparator.comparing(BaseEntity::getCreatedAt)
+                        .reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 

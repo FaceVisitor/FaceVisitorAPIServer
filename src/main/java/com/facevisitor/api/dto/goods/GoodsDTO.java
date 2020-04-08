@@ -109,6 +109,18 @@ public class GoodsDTO {
 
     }
 
+    @Data
+    public static class GoodsListForCSVResponse {
+
+        Long id;
+
+        String name;
+
+        String vendor;
+
+        String category;
+
+    }
 
 
 }

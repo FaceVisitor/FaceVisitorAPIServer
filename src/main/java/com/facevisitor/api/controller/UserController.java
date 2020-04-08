@@ -1,8 +1,11 @@
 package com.facevisitor.api.controller;
 
 import com.facevisitor.api.domain.user.User;
+import com.facevisitor.api.dto.user.UserDTO;
 import com.facevisitor.api.service.user.UserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,18 +15,18 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/api/v1/user")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
 
-    final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    UserService userService;
+
+    ModelMapper modelMapper;
 
     @GetMapping("/me")
     ResponseEntity me(Principal principal) {
         User user = userService.getUserByEmail(principal.getName());
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(modelMapper.map(user, UserDTO.MeResponseDTO.class));
     }
 
     @PostMapping("/exist")

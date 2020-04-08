@@ -59,7 +59,7 @@ public class DataLoader implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 //            createOwner();
-            createJsonGoods(1L,1L);
+//            createJsonGoods(1L,1L);
     }
 
     String email = "sajang@facevisitor.com";
@@ -77,8 +77,9 @@ public class DataLoader implements CommandLineRunner {
         Object parse = parser.parse(new FileReader(new ClassPathResource("static/olive.json").getFile()));
         JSONArray jsonArray = (JSONArray) parse;
         Gson gson = new Gson();
-        ArrayList<GoodsDTO.GoodsJsonCreateRequest> o = gson.fromJson(jsonArray.toString(), new TypeToken<ArrayList<GoodsDTO.GoodsJsonCreateRequest>>() {
-        }.getType());
+        ArrayList<GoodsDTO.GoodsJsonCreateRequest> o = gson.fromJson(jsonArray.toString(),
+                new TypeToken<ArrayList<GoodsDTO.GoodsJsonCreateRequest>>() {
+                }.getType());
         List<Goods> goodsList = o.stream().map(goodsJsonCreateRequest -> {
             String replacedPrice = goodsJsonCreateRequest.getPrice().replace(",", "");
             Goods goods = new Goods();

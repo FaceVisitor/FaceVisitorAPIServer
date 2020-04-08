@@ -9,6 +9,7 @@ import com.facevisitor.api.dto.image.ImageDto;
 import com.facevisitor.api.owner.dto.StoreDto;
 import com.facevisitor.api.service.base.BaseService;
 import com.facevisitor.api.service.store.StoreService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
@@ -24,22 +25,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/owner/store")
+@AllArgsConstructor
 public class StoreController {
 
-    final
     StoreService storeService;
 
-    final
     BaseService baseService;
 
-    final
     ModelMapper modelMapper;
 
-    public StoreController(StoreService storeService, BaseService baseService, ModelMapper modelMapper) {
-        this.storeService = storeService;
-        this.baseService = baseService;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping
     public ResponseEntity list(Principal principal){
@@ -62,22 +56,23 @@ public class StoreController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable Long id){
-        if(id != null){
+    public ResponseEntity get(@PathVariable Long id) {
+        if (id != null) {
             return ResponseEntity.ok(storeService.get(id));
-        }else{
+        } else {
             throw new BadRequestException();
         }
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody StoreDto.StoreRequest storeRequest){
+    @PutMapping("{id}")
+    public ResponseEntity update(@RequestBody StoreDto.StoreRequest storeRequest, @PathVariable Long id) {
+        storeRequest.setId(id);
         return ResponseEntity.ok(storeService.update(storeRequest));
     }
 
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable Long id){
+    public ResponseEntity delete(@PathVariable Long id) {
         storeService.delete(id);
         return ResponseEntity.ok().build();
     }

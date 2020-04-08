@@ -6,6 +6,7 @@ import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.dto.image.ImageDto;
 import com.facevisitor.api.resource.GoodsResource;
 import com.facevisitor.api.service.goods.GoodsOwnerService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -27,21 +28,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping("/api/v1/owner/goods")
 @Slf4j
+@AllArgsConstructor
 public class GoodsOwnerController {
 
-    final GoodsOwnerService goodsOwnerService;
+    GoodsOwnerService goodsOwnerService;
 
-    final
     PagedResourcesAssembler pagedResourcesAssembler;
 
-    final
     ModelMapper modelMapper;
 
-    public GoodsOwnerController(GoodsOwnerService goodsOwnerService, PagedResourcesAssembler pagedResourcesAssembler, ModelMapper modelMapper) {
-        this.goodsOwnerService = goodsOwnerService;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping
     public ResponseEntity page(

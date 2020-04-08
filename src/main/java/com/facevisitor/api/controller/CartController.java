@@ -7,8 +7,8 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.cart.CartService;
 import com.facevisitor.api.service.goods.GoodsUserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,15 +18,13 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/cart")
+@AllArgsConstructor
 public class CartController {
 
-    @Autowired
     CartService cartService;
 
-    @Autowired
     UserRepository userRepository;
 
-    @Autowired
     GoodsUserService goodsUserService;
 
     @GetMapping

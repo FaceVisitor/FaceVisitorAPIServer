@@ -36,9 +36,10 @@ public class StoreService {
     }
 
     public Store create(Store store){
-        store.getImages().stream().peek(storeImage -> {
+        store.getImages().forEach(storeImage -> {
             storeImage.setStore(store);
         });
+
         return storeRepository.save(store);
     }
 
