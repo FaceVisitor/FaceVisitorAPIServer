@@ -122,5 +122,26 @@ public class GoodsDTO {
 
     }
 
+    @Data
+    public static class GoodsListResponse {
+
+        Long id;
+
+        String name;
+
+        String vendor;
+
+        String category;
+
+        Set<GoodsImage> images = new LinkedHashSet<>();
+
+        String description;
+
+        BigDecimal price;
+
+        BigDecimal salePrice;
+
+    }
+
 
 }
