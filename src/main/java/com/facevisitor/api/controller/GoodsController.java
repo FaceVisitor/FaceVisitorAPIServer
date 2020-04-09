@@ -3,12 +3,19 @@ package com.facevisitor.api.controller;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.service.goods.GoodsUserService;
+import com.facevisitor.api.service.personalize.PersonalizeService;
+import com.facevisitor.api.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,13 +26,20 @@ public class GoodsController {
 
     GoodsUserService goodsService;
 
+    UserService userService;
+
     ModelMapper modelMapper;
 
+    PersonalizeService personalizeService;
+
     @GetMapping("{id}")
-    public ResponseEntity detail(@PathVariable Long id){
+    public ResponseEntity detail(Principal principal, @PathVariable Long id) throws JsonProcessingException {
+        //조회 추천 이벤트 발생
+        personalizeService.viewEvent(getUserIdByPrincipal(principal), id);
+
         Goods detail = goodsService.get(id);
         GoodsDTO.GoodsDetailResponse detailResponse = modelMapper.map(detail, GoodsDTO.GoodsDetailResponse.class);
-        if(detail.getCategories() != null && detail.getCategories().size() >0) {
+        if (detail.getCategories() != null && detail.getCategories().size() > 0) {
             detailResponse.setCategory(detail.getCategories().stream().findFirst().orElse(null));
         }
         return ResponseEntity.ok(detailResponse);
@@ -33,15 +47,13 @@ public class GoodsController {
 
 
     @GetMapping("init/recommend")
-    public ResponseEntity initRecommend(){
-        List<Goods> goods = goodsService.initRecommend();
-        return ResponseEntity.ok(goods);
+    public ResponseEntity initRecommend(Principal principal) {
+        return ResponseEntity.ok(personalizeService.getRecommendations(getUserIdByPrincipal(principal)));
     }
 
     @GetMapping("init/best")
-    public ResponseEntity initBest(){
-        List<Goods> goods = goodsService.initBest();
-        return ResponseEntity.ok(goods);
+    public ResponseEntity initBest(Principal principal) {
+        return ResponseEntity.ok(personalizeService.getPopularity(getUserIdByPrincipal(principal)));
     }
 
     @GetMapping("init/history")
@@ -50,10 +62,6 @@ public class GoodsController {
         return ResponseEntity.ok(goods);
     }
 
-    @PostMapping("json")
-    public ResponseEntity initJson() {
-        return ResponseEntity.ok().build();
-    }
 
     @GetMapping
     public ResponseEntity all() {
@@ -61,4 +69,7 @@ public class GoodsController {
     }
 
 
+    public Long getUserIdByPrincipal(Principal principal) {
+        return userService.getUserByEmail(principal.getName()).getId();
+    }
 }

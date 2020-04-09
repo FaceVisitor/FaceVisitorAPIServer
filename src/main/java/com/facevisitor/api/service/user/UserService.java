@@ -8,8 +8,11 @@ import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.repository.GoodsRepository;
 import com.facevisitor.api.repository.UserRepository;
+import com.facevisitor.api.service.personalize.PersonalizeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,9 @@ public class UserService {
     GoodsRepository goodsRepository;
 
     final ModelMapper modelMapper;
+
+    @Autowired
+    PersonalizeService personalizeService;
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper, GoodsRepository goodsRepository) {
         this.userRepository = userRepository;
@@ -96,6 +102,12 @@ public class UserService {
         return user.getGoodsLike()
                 .stream().sorted(Comparator.comparing(BaseEntity::getCreatedAt)
                         .reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public void viewGoodsEvent(String email, Long goodId) throws JsonProcessingException {
+        User user = userRepository.findByEmail(email).orElseThrow(NotFoundUserException::new);
+        Long userId = user.getId();
+        personalizeService.viewEvent(userId, goodId);
     }
 
 

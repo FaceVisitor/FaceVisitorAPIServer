@@ -4,6 +4,7 @@ import com.facevisitor.api.common.exception.NotFoundGoodsException;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.repository.GoodsRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,18 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class GoodsUserService {
 
-    final
     GoodsRepository goodsRepository;
 
-    public GoodsUserService(GoodsRepository goodsRepository) {
-        this.goodsRepository = goodsRepository;
-    }
-
     @Transactional(readOnly = true)
-    public Goods get(Long id){
-        return goodsRepository.get(id).orElseThrow(NotFoundGoodsException::new);
+    public Goods get(Long goodsId) {
+        return goodsRepository.get(goodsId).orElseThrow(NotFoundGoodsException::new);
     }
 
 
