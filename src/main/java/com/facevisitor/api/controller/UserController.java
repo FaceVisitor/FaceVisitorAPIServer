@@ -2,6 +2,7 @@ package com.facevisitor.api.controller;
 
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.user.UserDTO;
+import com.facevisitor.api.service.goods.GoodsHistoryService;
 import com.facevisitor.api.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,8 @@ public class UserController {
 
     ModelMapper modelMapper;
 
+    GoodsHistoryService goodsHistoryService;
+
     @GetMapping("/me")
     ResponseEntity me(Principal principal) {
         User user = userService.getUserByEmail(principal.getName());
@@ -45,6 +48,11 @@ public class UserController {
     @PostMapping("/like/goods/{id}")
     ResponseEntity likeGoods(Principal principal, @PathVariable Long id) throws JsonProcessingException {
         return ResponseEntity.ok(userService.likeGoods(principal.getName(), id));
+    }
+
+    @GetMapping("/history/goods")
+    ResponseEntity getGoodsHistory(Principal principal) {
+        return ResponseEntity.ok(goodsHistoryService.getHistory(principal.getName()));
     }
 
 
