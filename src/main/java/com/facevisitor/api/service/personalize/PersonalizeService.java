@@ -1,5 +1,6 @@
 package com.facevisitor.api.service.personalize;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.personalizeevents.AmazonPersonalizeEvents;
 import com.amazonaws.services.personalizeevents.AmazonPersonalizeEventsClientBuilder;
@@ -50,7 +51,7 @@ public class PersonalizeService {
     final
     ObjectMapper objectMapper;
     String metaArn = "arn:aws:personalize:ap-northeast-2:007731194585:campaign/MetaCampaign";
-    String popularityArn = "arn:aws:personalize:ap-northeast-2:007731194585:solution/popularity";
+    String popularityArn = "arn:aws:personalize:ap-northeast-2:007731194585:campaign/popularity";
 
 
     public PersonalizeService(GoodsRepository goodsRepository, ModelMapper modelMapper, AWSCredentialsService awsCredentialsService, Gson gson, ObjectMapper objectMapper, UserRepository userRepository) {
@@ -68,7 +69,11 @@ public class PersonalizeService {
     }
 
     private AmazonPersonalizeEvents eventsClient() {
-        return AmazonPersonalizeEventsClientBuilder.standard().withCredentials(awsCredentialsService.credentials()).withRegion(Regions.AP_NORTHEAST_2).build();
+
+        AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration("personalize-events.ap-northeast-2.amazonaws.com", "ap-northeast-2");
+        AmazonPersonalizeEventsClientBuilder amazonPersonalizeEventsClientBuilder = AmazonPersonalizeEventsClientBuilder.standard().withCredentials(awsCredentialsService.credentials());
+        amazonPersonalizeEventsClientBuilder.setEndpointConfiguration(endpointConfiguration);
+        return amazonPersonalizeEventsClientBuilder.build();
     }
 
     public List<GoodsDTO.GoodsListResponse> getRecommendations(Long userId) {

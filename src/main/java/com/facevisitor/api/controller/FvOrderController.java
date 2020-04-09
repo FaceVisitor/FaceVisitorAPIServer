@@ -5,6 +5,7 @@ import com.facevisitor.api.common.exception.UnAuthorizedException;
 import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.dto.order.OrderDTO;
 import com.facevisitor.api.service.order.OrderService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -40,11 +41,11 @@ public class FvOrderController {
     }
 
     @PostMapping("/pay")
-    ResponseEntity pay(Principal principal , @RequestBody OrderDTO.OrderDirectPayRequest payRequest){
-        if(principal == null){
+    ResponseEntity pay(Principal principal, @RequestBody OrderDTO.OrderDirectPayRequest payRequest) throws JsonProcessingException {
+        if (principal == null) {
             throw new UnAuthorizedException();
         }
-        return ResponseEntity.ok(orderService.directPay(principal.getName(),payRequest));
+        return ResponseEntity.ok(orderService.directPay(principal.getName(), payRequest));
     }
 
     @PostMapping("/pay/multiple")

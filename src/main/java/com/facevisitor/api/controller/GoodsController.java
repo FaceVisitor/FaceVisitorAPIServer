@@ -1,7 +1,9 @@
 package com.facevisitor.api.controller;
 
 import com.facevisitor.api.domain.goods.Goods;
+import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.goods.GoodsDTO;
+import com.facevisitor.api.service.goods.GoodsHistoryService;
 import com.facevisitor.api.service.goods.GoodsUserService;
 import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.user.UserService;
@@ -32,12 +34,19 @@ public class GoodsController {
 
     PersonalizeService personalizeService;
 
-    @GetMapping("{id}")
-    public ResponseEntity detail(Principal principal, @PathVariable Long id) throws JsonProcessingException {
-        //조회 추천 이벤트 발생
-        personalizeService.viewEvent(getUserIdByPrincipal(principal), id);
+    GoodsHistoryService goodsHistoryService;
 
-        Goods detail = goodsService.get(id);
+    @GetMapping("{goodsId}")
+    public ResponseEntity detail(Principal principal, @PathVariable Long goodsId) throws JsonProcessingException {
+
+        User userByEmail = userService.getUserByEmail(principal.getName());
+        Goods detail = goodsService.get(goodsId);
+
+        //조회 추천 이벤트 발생
+        personalizeService.viewEvent(userByEmail.getId(), goodsId);
+
+        //상품 기록
+        goodsHistoryService.addGoodsHistory(userByEmail, detail);
         GoodsDTO.GoodsDetailResponse detailResponse = modelMapper.map(detail, GoodsDTO.GoodsDetailResponse.class);
         if (detail.getCategories() != null && detail.getCategories().size() > 0) {
             detailResponse.setCategory(detail.getCategories().stream().findFirst().orElse(null));

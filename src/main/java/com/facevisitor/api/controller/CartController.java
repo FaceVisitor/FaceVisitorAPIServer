@@ -7,6 +7,9 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.cart.CartService;
 import com.facevisitor.api.service.goods.GoodsUserService;
+import com.facevisitor.api.service.personalize.PersonalizeService;
+import com.facevisitor.api.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +26,25 @@ public class CartController {
 
     CartService cartService;
 
+    UserService userService;
+
     UserRepository userRepository;
 
     GoodsUserService goodsUserService;
 
+    PersonalizeService personalizeService;
+
     @GetMapping
-    public ResponseEntity list(Principal principal){
+    public ResponseEntity list(Principal principal) {
         List<Cart> list = cartService.list(principal.getName());
         return ResponseEntity.ok(list);
     }
 
     @PostMapping
-    public ResponseEntity create(Principal principal, @RequestBody Cart cart){
+    public ResponseEntity create(Principal principal, @RequestBody Cart cart) throws JsonProcessingException {
         User user = userRepository.findByEmail(principal.getName()).orElseThrow(NotFoundUserException::new);
         Goods goods = goodsUserService.get(cart.getGoods().getId());
+        personalizeService.cartEvent(user.getId(), goods.getId());
         cart.setUser(user);
         cart.setGoods(goods);
         Cart saved = cartService.create(cart);
@@ -59,4 +67,5 @@ public class CartController {
     public ResponseEntity updateQty(@PathVariable Long cart_id, @PathVariable int qty){
         return ResponseEntity.ok( cartService.updateQty(cart_id,qty));
     }
+
 }

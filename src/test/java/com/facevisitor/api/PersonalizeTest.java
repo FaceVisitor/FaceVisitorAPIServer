@@ -17,7 +17,12 @@ public class PersonalizeTest extends BaseTest {
     public void 상품추천얻기() {
         List<GoodsDTO.GoodsListResponse> recommendations = personalizeService.getRecommendations(1L);
         System.out.println(recommendations);
+    }
 
+    @Test
+    public void 인기상품얻기() {
+        List<GoodsDTO.GoodsListResponse> recommendations = personalizeService.getPopularity(1L);
+        System.out.println(recommendations);
     }
 
     @Test

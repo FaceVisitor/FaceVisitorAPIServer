@@ -25,4 +25,5 @@ public class AWSCredentialsServiceImpl implements AWSCredentialsService {
         AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
         return new AWSStaticCredentialsProvider(awsCredentials);
     }
+
 }

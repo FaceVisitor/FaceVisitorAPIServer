@@ -8,13 +8,17 @@ import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.domain.order.OrderLineItem;
 import com.facevisitor.api.domain.point.Point;
+import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.order.OrderDTO;
 import com.facevisitor.api.repository.GoodsRepository;
 import com.facevisitor.api.repository.OrderLineItemRepository;
 import com.facevisitor.api.repository.OrderRepository;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.goods.GoodsUserService;
+import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.point.PointService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,41 +26,29 @@ import static com.facevisitor.api.common.string.exception.ExceptionString.BAD_PR
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class OrderService {
-    final
+
     UserRepository userRepository;
 
-    final
     OrderRepository orderRepository;
 
-    final
     OrderLineItemRepository lineItemRepository;
 
-    final
     GoodsUserService goodsUserService;
 
-    final
     GoodsRepository goodsRepository;
 
-    final
     PointService pointService;
 
+    PersonalizeService personalizeService;
 
-    public OrderService(OrderRepository orderRepository, OrderLineItemRepository lineItemRepository, GoodsUserService goodsUserService, UserRepository userRepository, GoodsRepository goodsRepository, PointService pointService) {
-        this.orderRepository = orderRepository;
-        this.lineItemRepository = lineItemRepository;
-        this.goodsUserService = goodsUserService;
-        this.userRepository = userRepository;
-        this.goodsRepository = goodsRepository;
-        this.pointService = pointService;
-    }
 
-    public FVOrder directPay(String userEmail, OrderDTO.OrderDirectPayRequest payRequest) {
+    public FVOrder directPay(String userEmail, OrderDTO.OrderDirectPayRequest payRequest) throws JsonProcessingException {
         //set
         FVOrder fvOrder = new FVOrder();
         Goods goods = payRequest.getGoods();
         Goods persistGoods = goodsUserService.get(goods.getId());
-
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setGoods(persistGoods);
         orderLineItem.setGoodsName(persistGoods.getName());
@@ -71,20 +63,19 @@ public class OrderService {
         fvOrder.addLineItem(orderLineItem);
         fvOrder.setPayPrice(payRequest.getPayPrice());
 
+        User user = userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new);
+        fvOrder.setUser(user);
 
-        fvOrder.setUser(userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new));
+        //주문 이벤트 발생
+        personalizeService.orderEvent(user.getId(), goods.getId());
 
         if (payRequest.getUsePoint() != null && payRequest.getUsePoint().doubleValue() > 0) {
             fvOrder.setPoint(pointService.usePoint(fvOrder, payRequest.getUsePoint()));
         }
-
         pointService.savePoint(fvOrder);
-
-
         if (!fvOrder.validPrice()) {
             throw new BadRequestException(BAD_PRICE);
         }
-
 
         return orderRepository.save(fvOrder);
     }
@@ -92,8 +83,17 @@ public class OrderService {
     public FVOrder multiplePay(String userEmail, OrderDTO.OrderMultipleGoodsPayRequest payRequest) {
         //set
         FVOrder fvOrder = new FVOrder();
+        User user = userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new);
+        fvOrder.setUser(user);
+
         payRequest.getLineItems().forEach(orderLineItem -> {
             Goods pGoods = goodsRepository.findById(orderLineItem.getGoods().getId()).orElseThrow(NotFoundGoodsException::new);
+            try {
+                //주문 이벤트 발생
+                personalizeService.orderEvent(user.getId(), pGoods.getId());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             orderLineItem.setGoods(pGoods);
             if (!orderLineItem.validFrontPrice()) {
                 throw new BadRequestException(BAD_PRICE);
@@ -103,7 +103,6 @@ public class OrderService {
 
         fvOrder.setPayPrice(payRequest.getPayPrice());
 
-        fvOrder.setUser(userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new));
 
         if (payRequest.getUsePoint() != null && payRequest.getUsePoint().doubleValue() > 0) {
             fvOrder.setPoint(pointService.usePoint(fvOrder, payRequest.getUsePoint()));

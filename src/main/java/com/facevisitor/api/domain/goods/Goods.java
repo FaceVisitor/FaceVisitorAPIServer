@@ -73,4 +73,5 @@ public class Goods extends BaseEntity {
         this.images.removeIf(goodsImage -> goodsImage.getUrl().equals(url));
     }
 
+
 }

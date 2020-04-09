@@ -3,6 +3,7 @@ package com.facevisitor.api.controller;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.user.UserDTO;
 import com.facevisitor.api.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/like/goods/{id}")
-    ResponseEntity likeGoods(Principal principal, @PathVariable Long id) {
+    ResponseEntity likeGoods(Principal principal, @PathVariable Long id) throws JsonProcessingException {
         return ResponseEntity.ok(userService.likeGoods(principal.getName(), id));
     }
 
