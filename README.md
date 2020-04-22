@@ -27,4 +27,4 @@ build - ./gradlew build
 java -jar api-0.0.1.jar
 
 ###DEMO
-![Alt Text](https://facevisitor-bucket2.s3.ap-northeast-2.amazonaws.com/ezgif.com-resize+(2).gif)
+![Alt Text](https://facevisitor-bucket2.s3.ap-northeast-2.amazonaws.com/ezgif.com-resize+(1).gif)
