@@ -14,8 +14,12 @@ import java.util.Optional;
 public interface GoodsRepository extends JpaRepository<Goods, Long> {
 
   @EntityGraph(attributePaths = {"images", "categories"})
-  @Query("select g from Goods g where g.name like %?1% ")
+  @Query("select g from Goods g where g.name like %?1% or g.vendor like %?1% ")
   Page<Goods> page(String searchQuery, Pageable pageable);
+
+  @EntityGraph(attributePaths = {"images", "categories"})
+  @Query("select g from Goods g where g.name like %?1% or g.vendor like %?1% ")
+  List<Goods> search(String searchQuery);
 
   @EntityGraph(attributePaths = {"images", "categories", "store"})
   @Query("select g from Goods g where g.id = ?1")
@@ -24,6 +28,7 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
   @EntityGraph(attributePaths = {"images", "categories"})
   @Query("select g from Goods g where g.id IN :goodsIds")
   List<Goods> getAll(@Param("goodsIds") List<Long> goodsIds);
+
 
 
 }

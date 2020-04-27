@@ -97,6 +97,7 @@ public class GoodsDTO {
 
         Store store;
 
+
         GoodsCategory category;
 
         Set<GoodsImage> images = new LinkedHashSet<>();
@@ -140,6 +141,8 @@ public class GoodsDTO {
         BigDecimal price;
 
         BigDecimal salePrice;
+
+        Boolean like;
 
     }
 

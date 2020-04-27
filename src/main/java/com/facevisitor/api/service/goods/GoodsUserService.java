@@ -42,6 +42,10 @@ public class GoodsUserService {
         return goodsRepository.findAll(pageRequest).getContent();
     }
 
+    public List<Goods> searchList(String keyword) {
+        return goodsRepository.search(keyword);
+    }
+
     public List<GoodsDTO.GoodsListForCSVResponse> all() {
         return goodsRepository.findAll().stream().map(goods -> {
             GoodsDTO.GoodsListForCSVResponse response = new GoodsDTO.GoodsListForCSVResponse();
@@ -51,6 +55,7 @@ public class GoodsUserService {
             response.setVendor(goods.getVendor());
             return response;
         }).collect(Collectors.toList());
-
     }
+
+
 }

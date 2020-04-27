@@ -20,9 +20,9 @@ public class PersonalizeController {
         return ResponseEntity.ok(personalizeService.getRecommendations(userId));
     }
 
-    @GetMapping("/ranking/{userId}")
+    @GetMapping("/{userId}/pop")
     public ResponseEntity getRanking(@PathVariable Long userId) {
-        return ResponseEntity.ok(personalizeService.getRankings(userId));
+        return ResponseEntity.ok(personalizeService.getPopularity(userId));
     }
 
     @PostMapping("{userId}/event/view/{itemId}")
