@@ -47,11 +47,11 @@ public class PersonalizeService {
 
     final
     Gson gson;
-    String trackingId = "872bda53-fe70-4761-8704-69d357e47efa";
+    String trackingId = "97cd60b4-1c65-43fe-86fe-795c21ae2310";
     final
     ObjectMapper objectMapper;
-    String metaArn = "arn:aws:personalize:ap-northeast-2:007731194585:campaign/MetaCampaign";
-    String popularityArn = "arn:aws:personalize:ap-northeast-2:007731194585:campaign/popularity";
+    String metaArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/Mycampagin";
+    String popularityArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/PopularityCampagin";
 
 
     public PersonalizeService(GoodsRepository goodsRepository, ModelMapper modelMapper, AWSCredentialsService awsCredentialsService, Gson gson, ObjectMapper objectMapper, UserRepository userRepository) {
