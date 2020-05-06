@@ -9,8 +9,6 @@ import com.amazonaws.services.personalizeevents.model.PutEventsRequest;
 import com.amazonaws.services.personalizeevents.model.PutEventsResult;
 import com.amazonaws.services.personalizeruntime.AmazonPersonalizeRuntime;
 import com.amazonaws.services.personalizeruntime.AmazonPersonalizeRuntimeClientBuilder;
-import com.amazonaws.services.personalizeruntime.model.GetPersonalizedRankingRequest;
-import com.amazonaws.services.personalizeruntime.model.GetPersonalizedRankingResult;
 import com.amazonaws.services.personalizeruntime.model.GetRecommendationsRequest;
 import com.amazonaws.services.personalizeruntime.model.GetRecommendationsResult;
 import com.facevisitor.api.dto.goods.GoodsDTO;
@@ -47,11 +45,11 @@ public class PersonalizeService {
 
     final
     Gson gson;
-    String trackingId = "97cd60b4-1c65-43fe-86fe-795c21ae2310";
+    String trackingId = "02182ca8-6611-4987-a2eb-6fc27cab63cf";
     final
     ObjectMapper objectMapper;
-    String metaArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/Mycampagin";
-    String popularityArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/PopularityCampagin";
+    String metaArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/ML";
+    String popularityArn = "arn:aws:personalize:ap-northeast-2:901620516009:campaign/Popul";
 
 
     public PersonalizeService(GoodsRepository goodsRepository, ModelMapper modelMapper, AWSCredentialsService awsCredentialsService, Gson gson, ObjectMapper objectMapper, UserRepository userRepository) {
@@ -135,14 +133,6 @@ public class PersonalizeService {
         request.setEventList(createEvent(goodsId, EventType.ORDER));
         PutEventsResult putEventsResult = eventsClient().putEvents(request);
         System.out.println(putEventsResult.getSdkResponseMetadata().toString());
-    }
-
-    public List<GoodsDTO.GoodsListResponse> getRankings(Long userId) {
-        GetPersonalizedRankingRequest request = new GetPersonalizedRankingRequest();
-        request.withUserId(userId.toString()).withCampaignArn("arn:aws:personalize:ap-northeast-2:007731194585:campaign/MyFaceVisitorCampaign");
-        GetPersonalizedRankingResult personalizedRanking = runTimeClient().getPersonalizedRanking(request);
-        List<Long> itemIds = personalizedRanking.getPersonalizedRanking().stream().map(predictedItem -> Long.valueOf(predictedItem.getItemId())).collect(Collectors.toList());
-        return goodsRepository.getAll(itemIds).stream().map(goods1 -> modelMapper.map(goods1, GoodsDTO.GoodsListResponse.class)).collect(Collectors.toList());
     }
 
     public PutEventsRequest createEventRequest(Long userId) {

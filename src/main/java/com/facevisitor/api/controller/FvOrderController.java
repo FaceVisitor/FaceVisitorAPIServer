@@ -9,6 +9,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +28,8 @@ public class FvOrderController {
 
     ModelMapper modelMapper;
 
-
     @GetMapping("/{order_id}")
-    ResponseEntity get(@PathVariable  Long order_id){
+    ResponseEntity get(@PathVariable Long order_id) {
         FVOrder fvOrder = orderService.get(order_id);
         OrderDTO.OrderDetailResponse detailResponse = modelMapper.map(fvOrder, OrderDTO.OrderDetailResponse.class);
         double sum = detailResponse.getLineItems().stream().mapToDouble(orderLineItem -> orderLineItem.getFrontPrice().doubleValue()).sum();
@@ -35,9 +37,12 @@ public class FvOrderController {
         return ResponseEntity.ok(detailResponse);
     }
 
-    @GetMapping()
-    ResponseEntity list(){
-        return null;
+    @GetMapping
+    ResponseEntity page(@PageableDefault Pageable pageable, Principal principal) {
+        String email = principal.getName();
+        System.out.println(email);
+        Page<FVOrder> page = orderService.page(pageable, email);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("/pay")

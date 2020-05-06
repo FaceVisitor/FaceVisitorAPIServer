@@ -19,8 +19,12 @@ import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.point.PointService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static com.facevisitor.api.common.string.exception.ExceptionString.BAD_PRICE;
 
@@ -119,7 +123,17 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public FVOrder get(Long order_id){
-        return  orderRepository.get(order_id).orElseThrow(NotFoundException::new);
+    public FVOrder get(Long order_id) {
+        return orderRepository.get(order_id).orElseThrow(NotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<FVOrder> page(Pageable pageable, String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            return orderRepository.pageable(byEmail.get().getId(), pageable);
+        } else {
+            throw new NotFoundException();
+        }
     }
 }
