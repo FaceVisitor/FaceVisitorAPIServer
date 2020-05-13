@@ -23,6 +23,12 @@ public class Login {
 
         }
     }
+
+    @Data
+    public static class RequestTest{
+        String email;
+    }
+
     @Data
     @AllArgsConstructor
     public static class Response{

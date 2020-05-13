@@ -57,6 +57,17 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = "/login_test")
+    public ResponseEntity loginTest(@RequestBody @Valid  Login.RequestTest loginRequest, Errors errors) {
+
+        Map<String, String> login = authService.loginTest(loginRequest.getEmail());
+        String access_token = login.get("access_token");
+        String refresh_token = login.get("refresh_token");
+        String createdAt = login.get("createdAt");
+        Login.Response response = new Login.Response(access_token,refresh_token,createdAt);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping(value = "/direct_login")
     public ResponseEntity directLogin(@RequestBody @Valid  Login.Request loginRequest, Errors errors) {
 

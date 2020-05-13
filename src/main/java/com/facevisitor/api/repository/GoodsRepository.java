@@ -29,6 +29,10 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
   @Query("select g from Goods g where g.id IN :goodsIds")
   List<Goods> getAll(@Param("goodsIds") List<Long> goodsIds);
 
+  @EntityGraph(attributePaths = {"images", "categories"})
+  @Query("select g from Goods g order by g.viewCnt desc")
+  List<Goods> getPopularity(Pageable pageable);
+
 
 
 }

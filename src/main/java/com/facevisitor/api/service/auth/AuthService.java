@@ -89,6 +89,20 @@ public class AuthService {
         return loginMeta;
     }
 
+    public Map<String,String> loginTest(String email){
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null){
+            throw new NotFoundException();
+        }
+        String accessToken = jwtUtils.createAccessToken(email);
+        String refreshToken = jwtUtils.createRefreshToken(email);
+        HashMap<String,String> loginMeta = new HashMap<>();
+        loginMeta.put("access_token", accessToken);
+        loginMeta.put("refresh_token",refreshToken);
+        loginMeta.put("createdAt", LocalDateTime.now().toString());
+        return loginMeta;
+    }
+
     public ResponseEntity refreshToken(String refreshToken, HttpServletRequest request) {
         // 탈퇴한 계정인지 체크
         String host = ServerUtils.myHostname(request);

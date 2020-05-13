@@ -43,6 +43,9 @@ public class Goods extends BaseEntity {
     @Transient
     Boolean like;
 
+
+    int viewCnt;
+
     @OneToMany(mappedBy = "goods", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.EAGER)
     Set<GoodsImage> images = new LinkedHashSet<>();
 
@@ -73,5 +76,8 @@ public class Goods extends BaseEntity {
         this.images.removeIf(goodsImage -> goodsImage.getUrl().equals(url));
     }
 
+    public void plusViewCnt(){
+        this.viewCnt = this.viewCnt +1;
+    }
 
 }

@@ -44,7 +44,7 @@ public class CartController {
     public ResponseEntity create(Principal principal, @RequestBody Cart cart) throws JsonProcessingException {
         User user = userRepository.findByEmail(principal.getName()).orElseThrow(NotFoundUserException::new);
         Goods goods = goodsUserService.get(cart.getGoods().getId());
-        personalizeService.cartEvent(user.getId(), goods.getId());
+
         cart.setUser(user);
         cart.setGoods(goods);
         Cart saved = cartService.create(cart);

@@ -1,5 +1,6 @@
 package com.facevisitor.api.controller;
 
+import com.facevisitor.api.service.goods.GoodsUserService;
 import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
@@ -15,14 +16,11 @@ public class PersonalizeController {
 
     PersonalizeService personalizeService;
 
+    GoodsUserService goodsUserService;
+
     @GetMapping("{userId}")
     public ResponseEntity getRecommend(@PathVariable Long userId) {
         return ResponseEntity.ok(personalizeService.getRecommendations(userId));
-    }
-
-    @GetMapping("/{userId}/pop")
-    public ResponseEntity getRanking(@PathVariable Long userId) {
-        return ResponseEntity.ok(personalizeService.getPopularity(userId));
     }
 
     @PostMapping("{userId}/event/view/{itemId}")

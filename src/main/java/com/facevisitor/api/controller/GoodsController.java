@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,10 +39,7 @@ public class GoodsController {
 
         User userByEmail = userService.getUserByEmail(principal.getName());
         Goods detail = goodsService.get(goodsId);
-
         //조회 추천 이벤트 발생
-        personalizeService.viewEvent(userByEmail.getId(), goodsId);
-
         //상품 기록
         goodsHistoryService.addGoodsHistory(userByEmail, detail);
         GoodsDTO.GoodsDetailResponse detailResponse = modelMapper.map(detail, GoodsDTO.GoodsDetailResponse.class);
@@ -51,15 +49,21 @@ public class GoodsController {
         return ResponseEntity.ok(detailResponse);
     }
 
-
-    @GetMapping("init/recommend")
-    public ResponseEntity initRecommend(Principal principal) {
-        return ResponseEntity.ok(personalizeService.getRecommendations(getUserIdByPrincipal(principal)));
+    @GetMapping("/pop")
+    public ResponseEntity getPop() {
+        return ResponseEntity.ok(goodsService.getPop());
     }
 
-    @GetMapping("init/best")
-    public ResponseEntity initBest(Principal principal) {
-        return ResponseEntity.ok(personalizeService.getPopularity(getUserIdByPrincipal(principal)));
+    @GetMapping("init/recommend")
+    public ResponseEntity initRecommend() {
+        List<Goods> goods = goodsService.initRecommend();
+        return ResponseEntity.ok(goods);
+    }
+
+    @PostMapping("getGoods")
+    public ResponseEntity getGoods(@RequestBody HashMap<String,List<Long>> payload) {
+        List<Goods> goods = goodsService.getGoods(payload.get("goodsIds"));
+        return ResponseEntity.ok(goods);
     }
 
     @GetMapping("init/history")

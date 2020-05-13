@@ -18,11 +18,17 @@ public class GoodsUserService {
 
     GoodsRepository goodsRepository;
 
-    @Transactional(readOnly = true)
     public Goods get(Long goodsId) {
-        return goodsRepository.get(goodsId).orElseThrow(NotFoundGoodsException::new);
+        Goods goods = goodsRepository.get(goodsId).orElseThrow(NotFoundGoodsException::new);
+        goods.setViewCnt(goods.getViewCnt()+1);
+        return goods;
     }
 
+    @Transactional(readOnly = true)
+    public List<Goods> getGoods(List<Long> goodsIds)
+    {
+        return goodsIds.stream().map(id->goodsRepository.findById(id).orElseThrow(NotFoundGoodsException::new)).collect(Collectors.toList());
+    }
 
     @Transactional(readOnly = true)
     public List<Goods> initRecommend() {
@@ -31,9 +37,9 @@ public class GoodsUserService {
     }
 
     @Transactional(readOnly = true)
-    public List<Goods> initBest() {
-        PageRequest pageRequest = PageRequest.of(1, 7);
-        return goodsRepository.findAll(pageRequest).getContent();
+    public List<Goods> getPop() {
+        PageRequest pageRequest = PageRequest.of(1,15);
+        return goodsRepository.getPopularity(pageRequest);
     }
 
     @Transactional(readOnly = true)

@@ -80,11 +80,9 @@ public class UserService {
         //좋아요 해제
         if (existGoods.size() > 0) {
             user.removeGoodsLike(goods_id);
-            personalizeService.disLikeEvent(user.getId(), goods_id);
             return false;
         } else {
             //좋아요
-            personalizeService.likeEvent(user.getId(), goods_id);
             Goods goods = goodsRepository.findById(goods_id)
                     .orElseThrow(() -> new NotFoundGoodsException(goods_id));
             user.addGoodsLike(goods);

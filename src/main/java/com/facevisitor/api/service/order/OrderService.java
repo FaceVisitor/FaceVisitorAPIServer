@@ -70,9 +70,6 @@ public class OrderService {
         User user = userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new);
         fvOrder.setUser(user);
 
-        //주문 이벤트 발생
-        personalizeService.orderEvent(user.getId(), goods.getId());
-
         if (payRequest.getUsePoint() != null && payRequest.getUsePoint().doubleValue() > 0) {
             fvOrder.setPoint(pointService.usePoint(fvOrder, payRequest.getUsePoint()));
         }
@@ -92,12 +89,6 @@ public class OrderService {
 
         payRequest.getLineItems().forEach(orderLineItem -> {
             Goods pGoods = goodsRepository.findById(orderLineItem.getGoods().getId()).orElseThrow(NotFoundGoodsException::new);
-            try {
-                //주문 이벤트 발생
-                personalizeService.orderEvent(user.getId(), pGoods.getId());
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
             orderLineItem.setGoods(pGoods);
             if (!orderLineItem.validFrontPrice()) {
                 throw new BadRequestException(BAD_PRICE);

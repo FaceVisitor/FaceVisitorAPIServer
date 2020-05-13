@@ -61,7 +61,6 @@ public class PersonalizeService {
         this.userRepository = userRepository;
     }
 
-
     private AmazonPersonalizeRuntime runTimeClient() {
         return AmazonPersonalizeRuntimeClientBuilder.standard().withCredentials(awsCredentialsService.credentials()).withRegion(Regions.AP_NORTHEAST_2).build();
     }
@@ -78,7 +77,12 @@ public class PersonalizeService {
         GetRecommendationsRequest getRecommendationsRequest = new GetRecommendationsRequest();
         getRecommendationsRequest.withUserId(userId.toString())
                 .withCampaignArn(metaArn);
+
         GetRecommendationsResult recommendations = runTimeClient().getRecommendations(getRecommendationsRequest);
+
+        List<String> collect = recommendations.getItemList().stream().map(item -> item.getItemId()).collect(Collectors.toList());
+        System.out.println(collect);
+        System.out.println();
         List<Long> itemIds = recommendations.getItemList().
                 stream().map(predictedItem -> Long.valueOf(predictedItem.getItemId())).collect(Collectors.toList());
 
@@ -104,7 +108,9 @@ public class PersonalizeService {
         PutEventsRequest request = createEventRequest(userId);
         request.setEventList(createEvent(goodsId, EventType.VIEW));
         PutEventsResult putEventsResult = eventsClient().putEvents(request);
+        System.out.println("View Event  UserID : " + userId + "GOOds ID : " + goodsId );
         System.out.println(putEventsResult.getSdkResponseMetadata().toString());
+
     }
 
     public void likeEvent(Long userId, Long goodsId) throws JsonProcessingException {
@@ -172,6 +178,5 @@ public class PersonalizeService {
             this.eventValue = eventValue;
             this.eventId = eventId;
         }
-
     }
 }

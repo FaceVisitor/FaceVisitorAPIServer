@@ -8,7 +8,7 @@ plugins {
 group = 'com.facevisitor.api'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
-
+archivesBaseName = 'facevisitor'
 def queryDslVersion = '4.2.1'
 
 
