@@ -13,6 +13,10 @@ public interface UserRepository extends JpaRepository<User, Long>, UserCustomRep
     @Query("select u from User u where u.email = ?1")
     Optional<User> findByEmail(String email);
 
+    @EntityGraph(attributePaths = {"authorities", "faceMeta.faceId", "faceMeta.faceImages", "points"})
+    @Query("select u from User u where u.id = ?1")
+    Optional<User> getById(Long id);
+
     @Query("select u from User u join fetch u.authorities join fetch u.faceMeta fm join fetch fm.faceId fi where fi.faceId in (?1)")
     Optional<User> findByFaceIds(List<String> faceIds);
 

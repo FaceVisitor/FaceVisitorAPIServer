@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class OrderDTO {
     public static class OrderDirectPayRequest {
         Goods goods;
         int qty;
+        long storeId;
         BigDecimal usePoint;
         BigDecimal frontPrice;
         BigDecimal payPrice;
@@ -26,6 +28,7 @@ public class OrderDTO {
 
     @Data
     public static class OrderMultipleGoodsPayRequest{
+        long storeId;
         @NotNull
         Set<OrderLineItem> lineItems;
         BigDecimal usePoint;
@@ -35,7 +38,8 @@ public class OrderDTO {
     }
 
     @Data
-    public static class OrderCartPayRequest{
+    public static class OrderCartPayRequest {
+        long storeId;
         List<Goods> goods;
         BigDecimal usePoint;
         BigDecimal payPrice;
@@ -43,8 +47,18 @@ public class OrderDTO {
     }
 
     @Data
-    public static class OrderListResponse{
+    public static class OrderListResponse {
+        BigDecimal totalPrice;
+        List<OrderDTO.OrderListResponseItem> orders;
+    }
 
+    @Data
+    public static class OrderListResponseItem {
+        Long id;
+        Set<OrderLineItem> lineItems = new LinkedHashSet<>();
+        BigDecimal payPrice;
+        LocalDateTime createdAt;
+        BigDecimal totalPrice;
     }
 
     @Data

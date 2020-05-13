@@ -2,6 +2,7 @@ package com.facevisitor.api.domain.order;
 
 import com.facevisitor.api.domain.base.BaseEntity;
 import com.facevisitor.api.domain.point.Point;
+import com.facevisitor.api.domain.store.Store;
 import com.facevisitor.api.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -21,9 +22,13 @@ public class FVOrder extends BaseEntity {
     @GeneratedValue
     Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    Store store;
 
     @OneToOne(fetch = FetchType.LAZY)
     Point point;
@@ -32,7 +37,7 @@ public class FVOrder extends BaseEntity {
     Point savePoint;
 
     @OrderBy("id asc")
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "order")
     Set<OrderLineItem> lineItems = new LinkedHashSet<>();
 
     public void addLineItem(OrderLineItem orderLineItem){

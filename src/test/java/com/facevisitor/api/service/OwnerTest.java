@@ -1,5 +1,6 @@
 package com.facevisitor.api.service;
 
+import com.facevisitor.api.dto.order.OrderDTO;
 import com.facevisitor.api.dto.user.UserDTO;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.repository.UserToStoreRepository;
@@ -22,12 +23,15 @@ public class OwnerTest {
     UserRepository userRepository;
 
     @Test
-    public void 상점에_가입한_유저찾기(){
+    public void 상점에_가입한_유저찾기() {
         Long storeId = 1L;
         List<UserDTO.UserListResponse> usersByStoreId = userRepository.getUserListByStoreId(storeId);
         System.out.println(usersByStoreId);
-//        List<User> usersByStoreId1 = userToStoreRepository.findUsersByStoreId(storeId);
-//        System.out.println(usersByStoreId1);
+    }
 
+    @Test
+    public void 해당_상점에_유저의_주문목록() {
+        List<OrderDTO.OrderListResponseItem> orderByUserAndStore = userRepository.getOrderListByStore(1L);
+        System.out.println(orderByUserAndStore);
     }
 }

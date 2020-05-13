@@ -5,6 +5,7 @@ import com.facevisitor.api.domain.base.BaseEntity;
 import com.facevisitor.api.domain.cart.Cart;
 import com.facevisitor.api.domain.face.FaceMeta;
 import com.facevisitor.api.domain.goods.Goods;
+import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.domain.point.Point;
 import com.facevisitor.api.domain.security.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,7 +26,7 @@ import static javax.persistence.CascadeType.REMOVE;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"authorities", "faceMeta", "goodsLike", "points", "carts"})
+@ToString(exclude = {"authorities", "faceMeta", "goodsLike", "points", "carts", "orders"})
 public class User extends BaseEntity {
 
     @OneToOne(cascade = ALL, orphanRemoval = true)
@@ -100,6 +101,10 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<FVOrder> orders = new ArrayList<>();
 
 
 }

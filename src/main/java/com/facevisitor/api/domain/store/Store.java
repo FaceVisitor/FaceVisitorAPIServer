@@ -3,6 +3,7 @@ package com.facevisitor.api.domain.store;
 import com.facevisitor.api.common.exception.NotFoundException;
 import com.facevisitor.api.domain.base.BaseEntity;
 import com.facevisitor.api.domain.goods.Goods;
+import com.facevisitor.api.domain.order.FVOrder;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.domain.user.UserToStore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@ToString(exclude = {"images", "user"})
+@ToString(exclude = {"images", "user", "orders"})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -47,6 +48,10 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     @JsonIgnore
     Set<UserToStore> userToStores = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "store")
+    @JsonIgnore
+    List<FVOrder> orders = new ArrayList<>();
 
     public void addGood(Goods goods) {
         goods.setStore(this);
