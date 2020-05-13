@@ -43,6 +43,7 @@ public class StoreService {
         return storeRepository.save(store);
     }
 
+
     @Transactional(readOnly = true)
     public Store get(Long id){
         return storeRepository.findById(id).orElseThrow(NotFoundException::new);

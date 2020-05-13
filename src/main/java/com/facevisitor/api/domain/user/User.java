@@ -7,7 +7,6 @@ import com.facevisitor.api.domain.face.FaceMeta;
 import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.point.Point;
 import com.facevisitor.api.domain.security.Authority;
-import com.facevisitor.api.domain.store.Store;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,7 @@ import static javax.persistence.CascadeType.REMOVE;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"authorities", "faceMeta"})
+@ToString(exclude = {"authorities", "faceMeta", "goodsLike", "points", "carts"})
 public class User extends BaseEntity {
 
     @OneToOne(cascade = ALL, orphanRemoval = true)
@@ -39,9 +38,7 @@ public class User extends BaseEntity {
     private Long id;
     @Column(unique = true, nullable = false)
     private String email;
-    @OneToMany(mappedBy = "user", cascade = ALL)
-    @JsonIgnore
-    List<UserToStore> userToStores = new ArrayList<>();
+
     private String name;
     private String phone;
 
@@ -57,29 +54,30 @@ public class User extends BaseEntity {
     private Boolean enable = true;
 
     @ManyToMany(cascade = REMOVE)
-    @JoinTable(name = "GoodsLike",joinColumns = @JoinColumn(name = "user_id",nullable = false), inverseJoinColumns = @JoinColumn(name = "goods_id",nullable = false))
+    @JoinTable(name = "GoodsLike", joinColumns = @JoinColumn(name = "user_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "goods_id", nullable = false))
     @JsonIgnore
     Set<Goods> goodsLike = new LinkedHashSet<>();
 
-    public void addGoodsLike(Goods goods){
+    public void addGoodsLike(Goods goods) {
         this.goodsLike.add(goods);
     }
 
-    public void removeGoodsLike(Long id){
+    public void removeGoodsLike(Long id) {
         goodsLike.removeIf(goods -> goods.getId().equals(id));
     }
 
-    @OneToMany(mappedBy = "user",orphanRemoval = true,cascade = ALL)
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = ALL)
     @JsonIgnore
     Set<Cart> carts = new LinkedHashSet<>();
 
     //보유 포인트
     BigDecimal point = BigDecimal.ZERO;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = ALL,orphanRemoval = true,mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true, mappedBy = "user")
+    @JsonIgnore
     List<Point> points = new ArrayList<>();
 
-    public void addPoint(Point point){
+    public void addPoint(Point point) {
         point.setUser(this);
         this.points.add(point);
     }
@@ -102,13 +100,6 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     private String password;
-
-    public void addStore(Store store) {
-        UserToStore userToStore = new UserToStore();
-        userToStore.setStore(store);
-        userToStore.setUser(this);
-        this.userToStores.add(userToStore);
-    }
 
 
 }

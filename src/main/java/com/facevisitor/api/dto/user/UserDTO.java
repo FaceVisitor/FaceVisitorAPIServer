@@ -11,6 +11,13 @@ import java.util.List;
 public class UserDTO {
 
     @Data
+    public static class UserListResponse{
+        private Long id;
+        private String name;
+        private String phone;
+    }
+
+    @Data
     public static class MeResponseDTO {
         //보유 포인트
         BigDecimal point = BigDecimal.ZERO;

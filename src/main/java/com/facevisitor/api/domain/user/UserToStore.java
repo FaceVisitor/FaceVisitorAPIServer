@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Slf4j
 @Entity(name = "UserToStore")
@@ -21,10 +18,10 @@ public class UserToStore extends BaseEntity {
     @GeneratedValue
     Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Store store;
 
 
