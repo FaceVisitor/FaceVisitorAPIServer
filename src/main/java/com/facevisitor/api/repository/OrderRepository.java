@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<FVOrder, Long> {
 
     @EntityGraph(attributePaths = {"lineItems.goods", "point", "user"})
-    @Query("select o from FVOrder o where o.user.id = ?1")
+    @Query("select o from FVOrder o where o.user.id = ?1 order by o.createdAt DESC ")
     Page<FVOrder> pageable(Long userId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"lineItems.goods", "point", "user"})

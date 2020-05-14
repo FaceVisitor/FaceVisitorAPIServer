@@ -10,10 +10,7 @@ import com.facevisitor.api.domain.order.OrderLineItem;
 import com.facevisitor.api.domain.point.Point;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.order.OrderDTO;
-import com.facevisitor.api.repository.GoodsRepository;
-import com.facevisitor.api.repository.OrderLineItemRepository;
-import com.facevisitor.api.repository.OrderRepository;
-import com.facevisitor.api.repository.UserRepository;
+import com.facevisitor.api.repository.*;
 import com.facevisitor.api.service.goods.GoodsUserService;
 import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.point.PointService;
@@ -47,10 +44,13 @@ public class OrderService {
 
     PersonalizeService personalizeService;
 
+    StoreRepository storeRepository;
+
 
     public FVOrder directPay(String userEmail, OrderDTO.OrderDirectPayRequest payRequest) throws JsonProcessingException {
         //set
         FVOrder fvOrder = new FVOrder();
+        fvOrder.setStore(storeRepository.findById(payRequest.getStoreId()).orElseThrow(NotFoundException::new));
         Goods goods = payRequest.getGoods();
         Goods persistGoods = goodsUserService.get(goods.getId());
         OrderLineItem orderLineItem = new OrderLineItem();
@@ -84,6 +84,7 @@ public class OrderService {
     public FVOrder multiplePay(String userEmail, OrderDTO.OrderMultipleGoodsPayRequest payRequest) {
         //set
         FVOrder fvOrder = new FVOrder();
+        fvOrder.setStore(storeRepository.findById(payRequest.getStoreId()).orElseThrow(NotFoundException::new));
         User user = userRepository.findByEmail(userEmail).orElseThrow(NotFoundUserException::new);
         fvOrder.setUser(user);
 

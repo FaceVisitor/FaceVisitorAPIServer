@@ -44,15 +44,13 @@ public class UserCustomRepositoryImpl extends QuerydslRepositorySupport implemen
 
     @Override
     public List<UserDTO.UserListResponse> getUserListByStoreId(Long storeId) {
-        List<UserDTO.UserListResponse> userListResponses =
-                jpaQueryFactory.select(qUserToStore.user).from(qUserToStore)
-                        .leftJoin(qUserToStore.user, qUser).leftJoin(qUser.faceMeta)
-                        .where(qUserToStore.store.id.eq(storeId))
-                        .fetch().stream()
-                        .map(result -> modelMapper.map(result, UserDTO.UserListResponse.class))
-                        .collect(Collectors.toList());
-
-        return userListResponses;
+        return jpaQueryFactory.select(qUserToStore.user).from(qUserToStore)
+                .leftJoin(qUserToStore.user, qUser).leftJoin(qUser.faceMeta)
+                .orderBy(qUser.createdAt.desc())
+                .where(qUserToStore.store.id.eq(storeId))
+                .fetch().stream()
+                .map(result -> modelMapper.map(result, UserDTO.UserListResponse.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -62,6 +60,7 @@ public class UserCustomRepositoryImpl extends QuerydslRepositorySupport implemen
                 .fetchJoin()
                 .leftJoin(qOrderLineItem.goods)
                 .fetchJoin()
+                .orderBy(qOrder.createdAt.desc())
                 .where(qOrder.store.id.eq(storeId))
                 .fetch()
                 .stream().filter(Objects::nonNull)
@@ -77,6 +76,7 @@ public class UserCustomRepositoryImpl extends QuerydslRepositorySupport implemen
                 .leftJoin(qOrder.lineItems)
                 .fetchJoin()
                 .distinct()
+                .orderBy(qOrder.createdAt.desc())
                 .where(qUserToStore.store.id.eq(storeId))
                 .where(qUser.id.eq(userId))
                 .fetch()
@@ -91,6 +91,7 @@ public class UserCustomRepositoryImpl extends QuerydslRepositorySupport implemen
                 .leftJoin(qOrderLineItem.goods)
                 .fetchJoin()
                 .where(qOrder.store.id.eq(storeId))
+                .orderBy(qOrder.createdAt.desc())
                 .fetch()
                 .stream().filter(Objects::nonNull)
                 .collect(Collectors.toList());
