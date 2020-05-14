@@ -9,10 +9,14 @@ import com.facevisitor.api.domain.face.FaceId;
 import com.facevisitor.api.domain.face.FaceImage;
 import com.facevisitor.api.domain.face.FaceMeta;
 import com.facevisitor.api.domain.security.Authority;
+import com.facevisitor.api.domain.store.Store;
 import com.facevisitor.api.domain.user.User;
+import com.facevisitor.api.domain.user.UserToStore;
 import com.facevisitor.api.dto.user.Join;
 import com.facevisitor.api.repository.AuthorityRepository;
+import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.repository.UserRepository;
+import com.facevisitor.api.repository.UserToStoreRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +57,14 @@ public class AuthService {
 
     @Autowired
     AuthorityRepository authorityRepository;
+
+    @Autowired
+    UserToStoreRepository userToStoreRepository;
+
+    @Autowired
+    StoreRepository storeRepository;
+
+
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -173,7 +185,14 @@ public class AuthService {
             faceMeta.addFaceImage(faceImage);
         }
         mappedUser.addFaceMeta(faceMeta);
-        return userRepository.save(mappedUser);
+        UserToStore userToStore = new UserToStore();
+
+        User save = userRepository.save(mappedUser);
+        Store store = storeRepository.findById(join.getStoreId()).orElseThrow(NotFoundException::new);
+        userToStore.setUser(save);
+        userToStore.setStore(store);
+        userToStoreRepository.save(userToStore);
+        return save;
     }
 
 

@@ -27,6 +27,12 @@ public class UserController {
 
     GoodsHistoryService goodsHistoryService;
 
+    @PostMapping("/id")
+    ResponseEntity getId(@RequestBody HashMap<String, String> payload) {
+        String email = payload.get("email");
+        return ResponseEntity.ok(userService.getId(email));
+    }
+
     @GetMapping("/me")
     ResponseEntity me(Principal principal) {
         User user = userService.getUserByEmail(principal.getName());

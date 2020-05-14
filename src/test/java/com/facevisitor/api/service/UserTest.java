@@ -54,7 +54,7 @@ public class UserTest {
 //        userService.deleteUser(45L);
 //        userService.deleteUser(46L);
 //        userService.deleteUser(47L);
-        userService.deleteUser(52L);
+        userService.deleteUser(11L);
     }
 
 

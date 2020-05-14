@@ -66,6 +66,12 @@ public class GoodsController {
         return ResponseEntity.ok(goods);
     }
 
+    @GetMapping("/goods-by-category")
+    public ResponseEntity getGoodsByCategory() {
+        return ResponseEntity.ok( goodsService.getGoodsByCategory());
+    }
+
+
     @GetMapping("init/history")
     public ResponseEntity initHistory() {
         List<Goods> goods = goodsService.initHistory();

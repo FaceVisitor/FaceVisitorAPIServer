@@ -25,5 +25,6 @@ public class Join {
     String gender;
     int lowAge;
     int highAge;
+    Long storeId;
 
 }

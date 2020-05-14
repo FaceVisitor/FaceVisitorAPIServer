@@ -102,7 +102,7 @@ public class User extends BaseEntity {
     @JsonIgnore
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = ALL)
     @JsonIgnore
     List<FVOrder> orders = new ArrayList<>();
 

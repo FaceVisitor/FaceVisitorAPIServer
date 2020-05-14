@@ -38,6 +38,12 @@ public class UserService {
 
 
 
+
+    @Transactional(readOnly = true)
+    public Long getId(String email){
+        return userRepository.findByEmail(email).orElseThrow(NotFoundException::new).getId();
+    }
+
     @Transactional(readOnly = true)
     public Boolean exist(String email) {
         return userRepository.findByEmail(email).isPresent();
@@ -69,6 +75,7 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         user.setAuthorities(null);
+
         userRepository.deleteById(id);
 
     }
