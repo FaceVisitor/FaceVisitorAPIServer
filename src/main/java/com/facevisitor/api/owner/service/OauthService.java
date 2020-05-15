@@ -71,6 +71,7 @@ public class OauthService {
 
     private TokenDto getTokenDto(MultiValueMap<String, String> map) {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, getBasicAuthHeaders());
+        System.out.println(base_url);
         ResponseEntity<TokenDto> tokenResponse = restTemplate.postForEntity(base_url+"/oauth/token", request, TokenDto.class);
         if(tokenResponse.getStatusCode().is2xxSuccessful()){
             return tokenResponse.getBody();
