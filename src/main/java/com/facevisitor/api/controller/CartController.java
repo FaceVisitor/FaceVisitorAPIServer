@@ -7,7 +7,6 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.service.cart.CartService;
 import com.facevisitor.api.service.goods.GoodsUserService;
-import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
@@ -32,7 +31,6 @@ public class CartController {
 
     GoodsUserService goodsUserService;
 
-    PersonalizeService personalizeService;
 
     @GetMapping
     public ResponseEntity list(Principal principal) {

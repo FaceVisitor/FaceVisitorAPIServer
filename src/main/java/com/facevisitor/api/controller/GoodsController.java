@@ -5,7 +5,6 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.goods.GoodsDTO;
 import com.facevisitor.api.service.goods.GoodsHistoryService;
 import com.facevisitor.api.service.goods.GoodsUserService;
-import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,6 @@ public class GoodsController {
 
     ModelMapper modelMapper;
 
-    PersonalizeService personalizeService;
 
     GoodsHistoryService goodsHistoryService;
 

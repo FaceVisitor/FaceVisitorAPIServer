@@ -8,7 +8,6 @@ import com.facevisitor.api.domain.goods.Goods;
 import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.repository.GoodsRepository;
 import com.facevisitor.api.repository.UserRepository;
-import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +32,6 @@ public class UserService {
     GoodsRepository goodsRepository;
 
     ModelMapper modelMapper;
-
-    PersonalizeService personalizeService;
-
 
 
 

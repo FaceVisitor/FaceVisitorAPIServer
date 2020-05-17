@@ -12,7 +12,6 @@ import com.facevisitor.api.domain.user.User;
 import com.facevisitor.api.dto.order.OrderDTO;
 import com.facevisitor.api.repository.*;
 import com.facevisitor.api.service.goods.GoodsUserService;
-import com.facevisitor.api.service.personalize.PersonalizeService;
 import com.facevisitor.api.service.point.PointService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
@@ -41,8 +40,6 @@ public class OrderService {
     GoodsRepository goodsRepository;
 
     PointService pointService;
-
-    PersonalizeService personalizeService;
 
     StoreRepository storeRepository;
 
