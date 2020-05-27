@@ -17,9 +17,9 @@ import com.facevisitor.api.repository.AuthorityRepository;
 import com.facevisitor.api.repository.StoreRepository;
 import com.facevisitor.api.repository.UserRepository;
 import com.facevisitor.api.repository.UserToStoreRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +44,7 @@ import static com.facevisitor.api.common.string.exception.ExceptionString.NOT_FO
 @Service
 @Transactional
 @Slf4j
+@AllArgsConstructor
 public class AuthService {
 
     @Value("${secret.oauth.clientId}")
@@ -52,27 +53,18 @@ public class AuthService {
     @Value("${secret.oauth.clientSecurity}")
     String clientSecurity;
 
-    @Autowired
     UserRepository userRepository;
 
-    @Autowired
     AuthorityRepository authorityRepository;
 
-    @Autowired
     UserToStoreRepository userToStoreRepository;
 
-    @Autowired
     StoreRepository storeRepository;
 
-
-
-    @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired
     JwtUtils jwtUtils;
 
-    @Autowired
     ModelMapper modelMapper;
 
 
