@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -34,8 +35,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    ResponseEntity me(Principal principal) {
-        User user = userService.getUserByEmail(principal.getName());
+    ResponseEntity me(OAuth2Authentication auth2Authentication) {
+        System.out.println("name : " + auth2Authentication.getName());
+        User user = userService.getUserByEmail(auth2Authentication.getName());
         return ResponseEntity.ok(modelMapper.map(user, UserDTO.MeResponseDTO.class));
     }
 

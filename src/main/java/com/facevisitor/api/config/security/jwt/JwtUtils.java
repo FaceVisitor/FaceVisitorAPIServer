@@ -23,14 +23,12 @@ public class JwtUtils {
     private String clientID; // 공개키
 
     @Autowired
-    private KeyPair keyPair;
+    KeyPair keyPair;
 
     public String createAccessToken(String email) {
-
-
         // 토큰 만료일 3일 후
-        Date expireDate = new Date(LocalDateTime.now().plusDays(3).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-
+        Date expireDate = new Date(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        System.out.println(expireDate);
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setExpiration(expireDate)

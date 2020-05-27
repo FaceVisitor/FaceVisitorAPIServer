@@ -9,15 +9,19 @@ plugins {
 
 jib {
     from {
-        image = "docker://openjdk:8-jre-alpine"
+        image = "docker:://openjdk:8-jre-alpine"
     }
     to {
         image = 'wndudpower/face'
+        tags = ["${project.version}".toString()]
+        credHelper = "pass"
     }
     container {
-        ports = ["8080"]
-        volumes = ["/tmp"]
-        environment = ["SPRING_PROFILES_ACTIVE" : "dev"]
+        environment = [
+                "JAVA_TOOL_OPTIONS": "-Xmx2048m -XX:+UseG1GC",
+                "SPRING_PROFILES_ACTIVE": "dev",
+                "TZ": "Asia/Seoul"
+        ]
     }
 }
 
